@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Q&A - Campus Career Connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Banner */
+        .banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #c7ea46;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 15px;
+        }
+
+        .banner img {
+            height: 90px;
+            cursor: pointer;
+        }
+
+        /* Logo Button on the Right */
+        .logo.right {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background-color: transparent;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .logo.right img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        /* Sidebar Menu */
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: -200px;
+            width: 200px;
+            height: calc(100% - 60px);
+            background-color: #c7ea46;
+            overflow: hidden;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #000;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #000;
+            color: #c7ea46;
+        }
+
+        .sidebar .logout-btn {
+            background-color: transparent;
+            color: #fff;
+            font-weight: bold;
+            margin-top: 20px;
+            border: none;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        /* Menu Button */
+        .menu-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1100;
+            background-color: #c7ea46;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        /* Chat Box Styling */
+        .content {
+            flex: 1;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            margin-top: 80px;
+        }
+
+        .content h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #c7ea46;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .chat-box {
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            height: 400px;
+            overflow-y: auto;
+        }
+
+        .message {
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 10px;
+        }
+
+        .message.student {
+            background-color: #c7ea46;
+            text-align: left;
+        }
+
+        .message.alumni {
+            background-color: #444;
+            text-align: right;
+        }
+
+        .input-area {
+            display: flex;
+            justify-content: center;
+            /* Center horizontally */
+            align-items: center;
+            /* Center vertically */
+            margin-top: 20px;
+            width: 100%;
+        }
+
+        .input-area input {
+            width: auto;
+            max-width: 400px;
+            /* Limit the input width */
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: #fff;
+        }
+
+        .input-area button {
+            padding: 10px;
+            background-color: #c7ea46;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .input-area button:hover {
+            background-color: #333;
+            color: #fff;
+        }
+
+        footer {
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #c7ea46;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Banner -->
+    <div class="banner">
+        <img src="./8-removebg-preview.png" alt="Logo">
+        <!-- Logo on the right wrapped in a button -->
+        <button class="logo right" onclick="logout()">
+            <img src="./9-removebg-preview.png" alt="Campus Career Connect Logo">
+        </button>
+    </div>
+
+    <!-- Menu Button -->
+    <button class="menu-btn" id="menuBtn">&#9776;</button>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <a href="Home2.html">Home</a>
+        <a href="MI.html">Mock Interviews</a>
+        <a href="AT.html">AptiTest</a>
+        <a href="CC.html">Coding Challenges</a>
+        <a href="AI.html">Alumni Interaction</a>
+        <a href="about.html">About Us</a>
+        <button class="logout-btn" onclick="logout()">
+            <img src="./9-removebg-preview.png" alt="Logout" style="height: 30px;">
+        </button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1>Q&A with Alumni</h1>
+
+        <div class="chat-box" id="chatBox">
+            <!-- Messages will appear here -->
+        </div>
+
+        <div class="input-area">
+            <input type="text" id="messageInput" placeholder="Type your message..." />
+            <button id="sendButton">Send</button>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2025 Campus Career Connect. All Rights Reserved.</p>
+        <p>Contact us: <a href="mailto:info@campuscareerconnect.com">info@campuscareerconnect.com</a></p>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        const socket = io('http://localhost:3000'); // Connect to the server
+        const messageInput = document.getElementById('messageInput');
+        const sendButton = document.getElementById('sendButton');
+        const chatBox = document.getElementById('chatBox');
+
+        // Handle sending messages when button is clicked
+        sendButton.addEventListener('click', () => {
+            const message = messageInput.value;
+            if (message.trim() !== '') {
+                socket.emit('sendMessage', message);
+                displayMessage(message, 'student');
+                messageInput.value = '';
+            }
+        });
+
+        // Handle sending messages when Enter key is pressed
+        messageInput.addEventListener('keypress', (event) => {
+            if (event.key === 'Enter' && messageInput.value.trim() !== '') {
+                socket.emit('sendMessage', messageInput.value);
+                displayMessage(messageInput.value, 'student');
+                messageInput.value = '';
+            }
+        });
+
+        // Display incoming messages
+        socket.on('receiveMessage', (message) => {
+            displayMessage(message, 'alumni');
+        });
+
+        // Display message in chat box
+        function displayMessage(message, sender) {
+            const messageElement = document.createElement('div');
+            messageElement.classList.add('message');
+            messageElement.classList.add(sender);
+            messageElement.textContent = message;
+            chatBox.appendChild(messageElement);
+            chatBox.scrollTop = chatBox.scrollHeight; // Auto-scroll to the latest message
+        }
+
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        function logout() {
+            alert('You have logged out!');
+            window.location.href = 'Home.html'; // Redirect to the login page
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home - Campus Career Connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+        }
+
+        .banner {
+            background-color: #c7ea46;
+            /* Green color */
+            padding: 20px 20px;
+            color: #000;
+            /* Black text */
+            border-radius: 15px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            
+            /* Flexbox for centering */
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center horizontally */
+            justify-content: center; /* Center vertically */
+            text-align: center;
+        }
+
+        .banner h1 {
+            font-size: 2rem;
+            /* Reduced font size */
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .banner p {
+            font-size: 1rem;
+            /* Reduced font size */
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            height: 90px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            height: 30px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .section {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            /* 3 items per row */
+            gap: 30px;
+            /* Space between items */
+            justify-items: center;
+            /* Center the cards in the grid */
+        }
+
+        .card {
+            width: 250px;
+            text-align: center;
+            background-color: #333;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            padding: 15px;
+            cursor: pointer;
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        .card:hover {
+            transform: scale(1.1);
+            background-color: #c7ea46;
+        }
+
+        .card img {
+            width: 100%;
+            height: 200px;
+            /* Retaining original size */
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            color: #fff;
+            margin-top: 10px;
+        }
+
+        footer {
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+
+        footer a {
+            color: #c7ea46;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Banner Section -->
+    <div class="banner">
+        <!-- Logo on the left -->
+        <img src="./8-removebg-preview.png" alt="Campus Career Connect Logo" class="logo left">
+
+        <!-- Logout Button -->
+        <img src="./9-removebg-preview.png" alt="Logout Button" class="logout-btn"
+            onclick="logout()">
+
+        <h1>Welcome to Campus Career Connect</h1>
+        <p>Your one-stop destination to unlock career opportunities and growth!</p>
+    </div>
+
+    <!-- Main Features Section -->
+    <div class="container">
+        <div class="section">
+            <!-- Mock Interviews -->
+            <div class="card" onclick="window.location.href='MI.html'">
+                <img src="./1.png" alt="Mock Interviews">
+                <h3>Mock Interviews</h3>
+            </div>
+
+            <!-- AptiTest -->
+            <div class="card" onclick="window.location.href='AT.html'">
+                <img src="./2.webp" alt="AptiTest">
+                <h3>AptiTest</h3>
+            </div>
+
+            <!-- Coding Challenges -->
+            <div class="card" onclick="window.location.href='CC.html'">
+                <img src="./3.jpg" alt="Coding Challenges">
+                <h3>Coding Challenges</h3>
+            </div>
+
+            <!-- Progress Dashboard -->
+            <div class="card" onclick="window.location.href='progressDashboard.html'">
+                <img src="./7.jpg" alt="Progress Dashboard">
+                <h3>Progress Dashboard</h3>
+            </div>
+
+            <!-- Alumni Interaction -->
+            <div class="card" onclick="window.location.href='AI.html'">
+                <img src="./4.jpg" alt="Alumni Interaction">
+                <h3>Alumni Interaction</h3>
+            </div>
+
+            <!-- About Us -->
+            <div class="card" onclick="window.location.href='about.html'">
+                <img src="./5.jpg" alt="About Us">
+                <h3>About Us</h3>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2025 Campus Career Connect. All Rights Reserved.</p>
+        <p>Contact us: <a href="mailto:info@campuscareerconnect.com">info@campuscareerconnect.com</a></p>
+    </footer>
+
+    <script>
+        function logout() {
+            // Simulate user logout by redirecting to login page or clearing session data
+            alert('You have logged out!');
+            window.location.href = 'Home.html'; // Redirect to the login page (replace with actual URL)
+        }
+    </script>
+
+</body>
+
+</html>
