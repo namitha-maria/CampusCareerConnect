@@ -34,27 +34,9 @@
         }
 
         .banner img {
-            height: 90px;
+            width: 100px; /* Adjust logo size */
+            height: 100px;
             cursor: pointer;
-        }
-
-        /* Logo Button on the Right */
-        .logo.right {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            width: 40px;
-            height: 40px;
-            border: none;
-            background-color: transparent;
-            padding: 0;
-            cursor: pointer;
-        }
-
-        .logo.right img {
-            width: 30px;
-            height: 30px;
-            object-fit: contain;
         }
 
         /* Sidebar Menu */
@@ -88,20 +70,6 @@
             background-color: #000;
             color: #c7ea46;
         }
-
-        .sidebar .logout-btn {
-            background-color: transparent;
-            color: #fff;
-            font-weight: bold;
-            margin-top: 20px;
-            border: none;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-    
 
         /* Menu Button */
         .menu-btn {
@@ -177,13 +145,6 @@
 
         .form-label {
             font-weight: bold;
-            color: #000;
-        }
-
-        .form-control {
-            background-color: rgba(255, 255, 255, 0.8);
-            border: 1px solid #c7ea46;
-            color: #000;
         }
 
         .btn-custom {
@@ -202,7 +163,7 @@
             transform: scale(1.1);
         }
 
-        /* Footer Style */
+        /* Footer */
         footer {
             background-color: #000;
             color: #fff;
@@ -219,23 +180,13 @@
         footer a:hover {
             text-decoration: underline;
         }
-
-        footer .social-icons i {
-            margin: 0 10px;
-            font-size: 1.5rem;
-            color: #c7ea46;
-        }
     </style>
 </head>
 
 <body>
     <!-- Banner -->
     <div class="banner">
-        <img src="./8-removebg-preview.png" alt="Logo">
-        <!-- Logo on the right wrapped in a button -->
-        <button class="logo right" onclick="logout()">
-            <img src="./9-removebg-preview.png" alt="Campus Career Connect Logo">
-        </button>
+        <img src="images/8-removebg-preview.png" alt="Logo">
     </div>
 
     <!-- Menu Button -->
@@ -249,8 +200,6 @@
         <a href="CC.html">Coding Challenges</a>
         <a href="AI.html">Alumni Interaction</a>
         <a href="about.html">About Us</a>
-
-        </button>
     </div>
 
     <!-- Main Content -->
@@ -300,12 +249,8 @@
         menuBtn.addEventListener('click', () => {
             sidebar.classList.toggle('active');
         });
-
-        function logout() {
-            alert('You have logged out!');
-            window.location.href = 'index.html'; // Redirect to the login page
-        }
     </script>
 </body>
 
 </html>
+
