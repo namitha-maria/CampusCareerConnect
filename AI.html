@@ -56,7 +56,6 @@
             object-fit: contain;
         }
 
-
         /* Sidebar Menu */
         .sidebar {
             position: fixed;
@@ -173,10 +172,10 @@
 <body>
     <!-- Banner -->
     <div class="banner">
-        <img src="./8-removebg-preview.png" alt="Logo">
+        <img src="images/8-removebg-preview.png" alt="Logo">
         <!-- Logo on the right wrapped in a button -->
         <button class="logo right" onclick="logout()">
-            <img src="./9-removebg-preview.png" alt="Campus Career Connect Logo">
+            <img src="images/9-removebg-preview.png" alt="Logout Logo">
         </button>
     </div>
 
@@ -199,8 +198,8 @@
         <p>Connect with alumni to gain insights, guidance, and networking opportunities.</p>
 
         <div class="buttons">
-            <button class="button" onclick="window.location.href='qa.html'">Q&A</button>
-            <button class="button" onclick="window.location.href='alumniDirectory.html'">Alumni Directory</button>
+            <button class="button" onclick="window.location.href='file:///D:/Project/CCC/Q&A.html'">Q&A</button>
+            <button class="button" onclick="window.location.href='file:///D:/Project/CCC/AD.html'">Alumni Directory</button>
         </div>
     </div>
 
@@ -217,7 +216,8 @@
         menuBtn.addEventListener('click', () => {
             sidebar.classList.toggle('active');
         });
-         function logout() {
+
+        function logout() {
             alert('You have logged out!');
             window.location.href = 'index.html'; // Redirect to the login page
         }
@@ -225,3 +225,4 @@
 </body>
 
 </html>
+
