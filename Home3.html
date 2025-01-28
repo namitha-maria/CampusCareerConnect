@@ -42,9 +42,19 @@
             position: absolute;
             top: 10px;
             left: 20px;
-            width: 50px;
+            width: 100px;
             height: auto;
         }
+
+        .logout {
+    position: absolute;
+    top: 50%; /* Center vertically */
+    right: 20px; /* Align to the right */
+    transform: translateY(-50%); /* Perfect vertical centering */
+    width: 30px; /* Adjust the size as needed */
+    height: auto; /* Maintain aspect ratio */
+    cursor: pointer; /* Pointer cursor for better UX */
+}
 
         .container {
             max-width: 1200px;
@@ -112,7 +122,8 @@
 
     <!-- Banner Section -->
     <div class="banner">
-        <img src="./8-removebg-preview.png" alt="Campus Career Connect Logo" class="logo">
+        <img src="./images/8-removebg-preview.png" alt="Campus Career Connect Logo" class="logo">
+        <img src="./images/9-removebg-preview.png" alt="Logout" class="logout" onclick="window.location.href='index.html'">
         <h1>Alumni Corner</h1>
         <p>Connect, Collaborate, and Contribute to your Alma Mater!</p>
     </div>
@@ -122,19 +133,19 @@
         <div class="section">
             <!-- Mock Interview -->
             <div class="card" onclick="window.location.href='mockInterview.html'">
-                <img src="./1.png" alt="Mock Interview">
+                <img src="./images/1.png" alt="Mock Interview">
                 <h3>Mock Interview</h3>
             </div>
 
             <!-- Q&A -->
             <div class="card" onclick="window.location.href='qa.html'">
-                <img src="./qa.jpg" alt="Q&A">
+                <img src="./images/qa.jpg" alt="Q&A">
                 <h3>Q&A</h3>
             </div>
 
             <!-- Alumni Directory -->
             <div class="card" onclick="window.location.href='alumniDirectory.html'">
-                <img src="./directory.jpg" alt="Alumni Directory">
+                <img src="./images/4.jpg" alt="Alumni Directory">
                 <h3>Alumni Directory</h3>
             </div>
         </div>
@@ -149,3 +160,4 @@
 </body>
 
 </html>
+
