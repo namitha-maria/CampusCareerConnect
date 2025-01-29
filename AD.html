@@ -13,7 +13,6 @@
             font-family: 'Arial', sans-serif;
             color: #fff;
             display: flex;
-            flex-direction: column;
             min-height: 100vh;
         }
 
@@ -46,7 +45,6 @@
             width: 200px;
             height: calc(100% - 60px);
             background-color: #c7ea46;
-            overflow: hidden;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
             transition: left 0.3s ease;
             z-index: 1000;
@@ -70,12 +68,39 @@
             color: #c7ea46;
         }
 
+        .sidebar .logout-btn {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Hamburger Icon */
+        .hamburger {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: transparent;
+            border: none;
+            font-size: 30px;
+            color: #fff;
+            cursor: pointer;
+            z-index: 1001;
+        }
+
         /* Content Area */
         .content {
+            margin-left: 0;
             flex: 1;
             padding: 20px;
-            transition: margin-left 0.3s ease;
             margin-top: 80px;
+            transition: margin-left 0.3s ease;
+        }
+
+        .content.hamburger-active {
+            margin-left: 200px; /* Offset for the sidebar when active */
         }
 
         .content h1 {
@@ -136,11 +161,11 @@
 <body>
     <!-- Banner -->
     <div class="banner">
-        <img src="./8-removebg-preview.png" alt="Logo">
+        <img src="D:/Project/CCC/images/8-removebg-preview.png" alt="Logo">
     </div>
 
-    <!-- Menu Button -->
-    <button class="menu-btn" id="menuBtn">&#9776;</button>
+    <!-- Hamburger Icon -->
+    <button class="hamburger" id="hamburger">&#9776;</button>
 
     <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar">
@@ -149,15 +174,17 @@
         <a href="AT.html">AptiTest</a>
         <a href="CC.html">Coding Challenges</a>
         <a href="AI.html">Alumni Interaction</a>
-        <a href="alumni_directory.html">Alumni Directory</a> <!-- New link to Alumni Directory -->
+        <a href="alumni_directory.html">Alumni Directory</a>
         <a href="about.html">About Us</a>
+
+        <!-- Logout Button -->
         <button class="logout-btn" onclick="logout()">
-            <img src="./9-removebg-preview.png" alt="Logout" style="height: 30px;">
+            <img src="D:/Project/CCC/images/9-removebg-preview.png" alt="Logout" style="height: 30px;">
         </button>
     </div>
 
     <!-- Main Content -->
-    <div class="content">
+    <div class="content" id="content">
         <h1>Alumni Directory</h1>
 
         <div class="alumni-list">
@@ -191,11 +218,14 @@
     </footer>
 
     <script>
-        const menuBtn = document.getElementById('menuBtn');
+        const hamburger = document.getElementById('hamburger');
         const sidebar = document.getElementById('sidebar');
+        const content = document.getElementById('content');
 
-        menuBtn.addEventListener('click', () => {
+        // Toggle sidebar visibility when hamburger icon is clicked
+        hamburger.addEventListener('click', () => {
             sidebar.classList.toggle('active');
+            content.classList.toggle('hamburger-active');
         });
 
         function logout() {
@@ -206,3 +236,4 @@
 </body>
 
 </html>
+
