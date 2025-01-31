@@ -9,7 +9,6 @@
     <style>
         body {
             background: url('./images/6.jpg') no-repeat center center fixed;
-            /* Updated relative path for background */
             background-size: cover;
             margin: 0;
             font-family: 'Arial', sans-serif;
@@ -18,7 +17,6 @@
 
         .overlay {
             background: rgba(0, 0, 0, 0.8);
-            /* Black transparent overlay */
             position: absolute;
             top: 0;
             left: 0;
@@ -29,10 +27,8 @@
 
         .sign-in-card {
             background-color: rgba(46, 46, 46, 0.9);
-            /* Transparent dark gray background */
             color: #fff;
             border: 1px solid #c7ea46;
-            /* Lime green border */
             border-radius: 15px;
             padding: 25px;
             max-width: 350px;
@@ -47,17 +43,13 @@
 
         .form-control {
             background-color: rgba(255, 255, 255, 0.8);
-            /* Semi-transparent white for inputs */
             border: 1px solid #c7ea46;
-            /* Lime green border */
             color: #000;
         }
 
         .btn-custom {
             background-color: #c7ea46;
-            /* Lime green button */
             color: #000;
-            /* Black text */
             font-size: 0.9rem;
             padding: 10px 15px;
             border: none;
@@ -68,15 +60,12 @@
 
         .btn-custom:hover {
             background-color: #000;
-            /* Black hover effect */
             color: #fff;
-            /* White text on hover */
             transform: scale(1.05);
         }
 
         .register-link {
             color: #c7ea46;
-            /* Lime green link */
             text-decoration: none;
             font-size: 0.9rem;
         }
@@ -91,24 +80,48 @@
     <div class="overlay"></div>
     <div class="sign-in-card">
         <h3 class="text-center mb-4">Alumni Sign In</h3>
-        <form>
+        <form id="signInForm">
             <div class="mb-3">
                 <label for="alumniEmail" class="form-label">Email Address</label>
-                <input type="email" class="form-control" id="alumniEmail" placeholder="Enter your alumni email"
-                    required>
+                <input type="email" class="form-control" id="alumniEmail" placeholder="Enter your alumni email" required>
             </div>
             <div class="mb-3">
                 <label for="alumniPassword" class="form-label">Password</label>
-                <input type="password" class="form-control" id="alumniPassword" placeholder="Enter your password"
-                    required>
+                <input type="password" class="form-control" id="alumniPassword" placeholder="Enter your password" required>
             </div>
-            <button type="button" class="btn btn-custom" onclick="window.location.href='Home3.html'">Sign In</button>
+            <button type="submit" class="btn btn-custom">Sign In</button>
         </form>
         <p class="text-center mt-3">
             New here? <a href="Register.html" class="register-link">Register as an Alumni</a>
         </p>
     </div>
+
+    <script>
+        document.getElementById('signInForm').addEventListener('submit', function (e) {
+            e.preventDefault(); // Prevent form submission by default
+
+            // Get form values
+            const email = document.getElementById('alumniEmail').value;
+            const password = document.getElementById('alumniPassword').value;
+
+            // Validate email (basic validation for the format)
+            const emailRegex = /^[a-zA-Z0-9._%+-]+@rajagiri\.edu\.in$/; // Or any specific domain for alumni email
+            if (!email || !emailRegex.test(email)) {
+                alert("Please enter a valid alumni email address ending with @rajagiri.edu.in");
+                return; // Stop the form submission if email is invalid
+            }
+
+            // Validate password (it shouldn't be empty)
+            if (!password) {
+                alert("Please enter your password.");
+                return; // Stop the form submission if password is empty
+            }
+
+            // If everything is valid, proceed to sign in
+            alert("Sign in successful! Redirecting to the homepage...");
+            window.location.href = 'Home3.html'; // Redirect to the alumni homepage
+        });
+    </script>
 </body>
 
 </html>
-
