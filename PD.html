@@ -18,7 +18,6 @@
             min-height: 100vh;
         }
 
-        /* Banner */
         .banner {
             position: fixed;
             top: 0;
@@ -26,8 +25,6 @@
             width: 100%;
             height: 80px;
             background-color: #c7ea46;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -39,7 +36,6 @@
             max-width: 100%;
         }
 
-        /* Logout Button */
         .logout-btn {
             position: absolute;
             top: 50%;
@@ -57,31 +53,17 @@
         }
 
         /* Sidebar Menu */
-        .menu-btn {
-            position: fixed;
-            top: 20px;
-            left: 20px;
-            z-index: 1200;
-            background-color: #c7ea46;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            cursor: pointer;
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #000;
-        }
-
         .sidebar {
             position: fixed;
             top: 80px;
-            left: -250px;
-            width: 250px;
+            left: -200px;
+            width: 200px;
             height: calc(100% - 80px);
             background-color: #c7ea46;
+            overflow: hidden;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
             transition: left 0.3s ease;
-            z-index: 1100;
+            z-index: 1000;
         }
 
         .sidebar.active {
@@ -102,62 +84,67 @@
             color: #c7ea46;
         }
 
-        /* Content */
-        .content {
-            flex: 1;
-            padding: 20px;
-            margin: 100px auto;
-            max-width: 900px;
-            text-align: center;
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1200;
+            background-color: #c7ea46;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #000;
         }
 
-        /* Progress Section */
+        .content {
+            flex: 1;
+            padding: 100px 20px 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
         .progress-container {
             display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 20px;
+            flex-direction: column;
         }
 
         .progress-card {
             background-color: #333;
             padding: 20px;
             border-radius: 10px;
-            margin: 10px;
+            margin: 10px 0;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
-            flex: 1;
-            min-width: 280px;
         }
 
         .progress-bar {
             background-color: #c7ea46;
+            height: 30px;
         }
 
-        /* Chart Container */
         .chart-container {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 100%;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 30px;
         }
 
         canvas {
-            max-width: 300px;
+            width: 100% !important;
+            height: 60% !important; /* Adjusting the height to 60% of the container height */
         }
     </style>
 </head>
 
 <body>
-    <!-- Banner -->
-    <div class="banner">
-        <img src="D:\Project\CCC\images\8-removebg-preview.png" alt="Campus Career Connect Logo">
-        <button class="logout-btn" onclick="logout()">
-            <img src="D:\Project\CCC\images\9-removebg-preview.png" alt="Logout">
-        </button>
-    </div>
-
-    <!-- Sidebar -->
-    <button class="menu-btn" id="menuBtn">&#9776;</button>
+    <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar">
         <a href="Home2.html">Home</a>
         <a href="MI.html">Mock Interviews</a>
@@ -167,55 +154,52 @@
         <a href="about.html">About Us</a>
     </div>
 
-    <!-- Main Content -->
+    <div class="banner">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <img src="D:\Project\CCC\images\8-removebg-preview.png" alt="Campus Career Connect Logo">
+        <button class="logout-btn" onclick="logout()">
+            <img src="D:\Project\CCC\images\9-removebg-preview.png" alt="Logout">
+        </button>
+    </div>
+
     <div class="content">
-        <h1>Progress Dashboard</h1>
-        <p>Track your performance in Aptitude Tests and Mock Interviews.</p>
-
-        <!-- Progress Cards -->
-        <div class="row progress-container">
-            <div class="col-md-6">
-                <div class="progress-card">
-                    <h5>Aptitude Test Progress</h5>
-                    <div class="progress">
-                        <div id="aptitudeProgress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0"
-                            aria-valuemin="0" aria-valuemax="100"></div>
+        <div class="row">
+            <div class="col-md-5">
+                <div class="progress-container">
+                    <div class="progress-card">
+                        <h5>Aptitude Test Progress</h5>
+                        <div class="progress">
+                            <div id="aptitudeProgress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p id="aptitudeScoreText">Loading...</p>
                     </div>
-                    <p id="aptitudeScoreText">Loading...</p>
+
+                    <div class="progress-card">
+                        <h5>Mock Interview Progress</h5>
+                        <div class="progress">
+                            <div id="mockInterviewProgress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p id="mockInterviewScoreText">Loading...</p>
+                    </div>
                 </div>
             </div>
 
-            <div class="col-md-6">
-                <div class="progress-card">
-                    <h5>Mock Interview Progress</h5>
-                    <div class="progress">
-                        <div id="mockInterviewProgress" class="progress-bar" role="progressbar" style="width: 0%;"
-                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
-                    <p id="mockInterviewScoreText">Loading...</p>
+            <div class="col-md-7">
+                <div class="chart-container">
+                    <canvas id="progressChart"></canvas>
                 </div>
             </div>
-        </div>
-
-        <!-- Centered Chart -->
-        <div class="chart-container">
-            <canvas id="progressChart"></canvas>
         </div>
     </div>
 
     <script>
-        // Sidebar Toggle
-        document.getElementById('menuBtn').addEventListener('click', function () {
-            document.getElementById('sidebar').classList.toggle('active');
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
         });
 
-        // Logout Function
-        function logout() {
-            alert('You have logged out!');
-            window.location.href = 'index.html';
-        }
-
-        // Fetch Scores Dynamically
         function fetchScores() {
             setTimeout(() => {
                 let aptitudeScore = Math.floor(Math.random() * 85);
@@ -234,18 +218,40 @@
         function renderChart(aptitude, mockInterview) {
             const ctx = document.getElementById('progressChart').getContext('2d');
             new Chart(ctx, {
-                type: 'doughnut',
+                type: 'line',
                 data: {
-                    labels: ['Aptitude Test', 'Mock Interview'],
-                    datasets: [{
-                        data: [aptitude, mockInterview],
-                        backgroundColor: ['#c7ea46', '#ff5733']
-                    }]
+                    labels: ['Attempt 1', 'Attempt 2', 'Attempt 3', 'Attempt 4', 'Attempt 5'],
+                    datasets: [
+                        {
+                            label: 'Aptitude Test',
+                            data: [aptitude - 10, aptitude - 5, aptitude, aptitude + 5, aptitude + 10],
+                            borderColor: '#c7ea46',
+                            fill: false
+                        },
+                        {
+                            label: 'Mock Interview',
+                            data: [mockInterview - 10, mockInterview - 5, mockInterview, mockInterview + 5, mockInterview + 10],
+                            borderColor: '#ff5733',
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
                 }
             });
         }
 
         window.onload = fetchScores;
+		
+    function logout() {
+        // Add any necessary logout functionality here
+        alert('You have logged out!');
+        window.location.href = 'index.html';  // Redirect to login page (replace with your actual login page)
+    }
+
+
     </script>
 </body>
 
