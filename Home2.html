@@ -45,10 +45,12 @@
 
         .logout-btn {
             position: absolute;
-            top: 50%;
+            top: 10px;
             right: 20px;
-            transform: translateY(-50%);
-            height: 30px;
+            font-size: 1.5rem;
+            color: #000;
+            background-color: transparent;
+            border: none;
             cursor: pointer;
         }
 
@@ -58,8 +60,19 @@
             padding: 20px;
         }
 
-        .card {
+        .row {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+
+        .col-12 {
             width: 100%;
+        }
+
+        .card {
+            width: 250px;
             text-align: center;
             background-color: #333;
             border-radius: 15px;
@@ -67,24 +80,52 @@
             padding: 15px;
             cursor: pointer;
             transition: transform 0.3s ease, background-color 0.3s ease;
+            margin: 10px;
         }
 
         .card:hover {
-            transform: scale(1.05);
+            transform: scale(1.1);
             background-color: #c7ea46;
         }
 
-        .card img {
-            width: 100%;
+        .icon {
+            background-size: cover;
+            background-position: center;
+            width: 150px;
             height: 150px;
-            object-fit: cover;
+            margin: 0 auto;
             border-radius: 10px;
         }
 
         .card h3 {
             font-size: 1.2rem;
             color: #fff;
-            margin-top: 10px;
+            margin-top: 15px;
+        }
+
+        /* Custom Background Icons */
+        .mock-interview {
+            background-image: url('file:///D:/Project/CCC/images/1.png');
+        }
+
+        .aptitest {
+            background-image: url('file:///D:/Project/CCC/images/2.webp');
+        }
+
+        .codecrack {
+            background-image: url('file:///D:/Project/CCC/images/3.jpg');
+        }
+
+        .progress-dashboard {
+            background-image: url('file:///D:/Project/CCC/images/7.png');
+        }
+
+        .alumni-directory {
+            background-image: url('file:///D:/Project/CCC/images/4.jpg');
+        }
+
+        .about-us {
+            background-image: url('file:///D:/Project/CCC/images/5.jpg');
         }
 
         footer {
@@ -109,8 +150,10 @@
 
     <!-- Banner Section -->
     <div class="banner">
-        <img src="D:/Project/CCC/images/8-removebg-preview.png" alt="Campus Career Connect Logo" class="logo">
-        <img src="D:/Project/CCC/images/9-removebg-preview.png" alt="Logout Button" class="logout-btn" onclick="logout()">
+        <img src="./images/8-removebg-preview.png" alt="Campus Career Connect Logo" class="logo">
+        <button class="logout-btn" onclick="logout()">
+            <i class="bi bi-box-arrow-right"></i> <!-- Bootstrap logout icon -->
+        </button>
         <h1>Welcome to Campus Career Connect</h1>
         <p>Your one-stop destination to unlock career opportunities and growth!</p>
     </div>
@@ -118,50 +161,48 @@
     <!-- Main Features Section -->
     <div class="container">
         <div class="row gy-4">
-            <!-- Mock Interviews -->
-            <div class="col-12 col-sm-6 col-md-4">
+            <!-- Row 1 -->
+            <div class="col-12 col-md-4">
                 <div class="card" onclick="window.location.href='MI.html'">
-                    <img src="D:/Project/CCC/images/1.png" alt="Mock Interviews">
-                    <h3>Mock Interviews</h3>
+                    <div class="icon mock-interview"></div>
+                    <h3>Mock Interview</h3>
                 </div>
             </div>
 
-            <!-- AptiTest -->
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-md-4">
                 <div class="card" onclick="window.location.href='AT.html'">
-                    <img src="D:/Project/CCC/images/2.webp" alt="AptiTest">
+                    <div class="icon aptitest"></div>
                     <h3>AptiTest</h3>
                 </div>
             </div>
 
-            <!-- Coding Challenges -->
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-md-4">
                 <div class="card" onclick="window.location.href='CC.html'">
-                    <img src="D:/Project/CCC/images/3.jpg" alt="Coding Challenges">
-                    <h3>Coding Challenges</h3>
+                    <div class="icon codecrack"></div>
+                    <h3>CodeCrack</h3>
                 </div>
             </div>
+        </div>
 
-            <!-- Progress Dashboard -->
-            <div class="col-12 col-sm-6 col-md-4">
+        <div class="row gy-4">
+            <!-- Row 2 -->
+            <div class="col-12 col-md-4">
                 <div class="card" onclick="window.location.href='PD.html'">
-                    <img src="D:/Project/CCC/images/7.jpg" alt="Progress Dashboard">
+                    <div class="icon progress-dashboard"></div>
                     <h3>Progress Dashboard</h3>
                 </div>
             </div>
 
-            <!-- Alumni Interaction -->
-            <div class="col-12 col-sm-6 col-md-4">
-                <div class="card" onclick="window.location.href='AI.html'">
-                    <img src="D:/Project/CCC/images/4.jpg" alt="Alumni Interaction">
-                    <h3>Alumni Interaction</h3>
+            <div class="col-12 col-md-4">
+                <div class="card" onclick="window.location.href='AD.html'">
+                    <div class="icon alumni-directory"></div>
+                    <h3>Alumni Directory</h3>
                 </div>
             </div>
 
-            <!-- About Us -->
-            <div class="col-12 col-sm-6 col-md-4">
+            <div class="col-12 col-md-4">
                 <div class="card" onclick="window.location.href='about.html'">
-                    <img src="D:/Project/CCC/images/5.jpg" alt="About Us">
+                    <div class="icon about-us"></div>
                     <h3>About Us</h3>
                 </div>
             </div>
@@ -184,5 +225,6 @@
 </body>
 
 </html>
+
 
 
