@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CodeCrack - Campus Career Connect</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
         body {
             background-color: #000;
@@ -82,18 +83,11 @@
             position: absolute;
             top: 10px;
             right: 15px;
-            width: 40px;
-            height: 40px;
-            border: none;
             background-color: transparent;
             padding: 0;
+            border: none; /* Remove border */
+            outline: none; /* Remove focus outline */
             cursor: pointer;
-        }
-
-        .logo.right img {
-            width: 30px;
-            height: 30px;
-            object-fit: contain;
         }
 
         .challenge-section {
@@ -151,7 +145,7 @@
     <div class="banner">
         <img src="D:\Project\CCC\images\8-removebg-preview.png" alt="Logo">
         <button class="logo right" onclick="logout()">
-            <img src="D:\Project\CCC\images\9-removebg-preview.png" alt="Campus Career Connect Logo">
+            <i class="bi bi-box-arrow-right" style="font-size: 1.5rem; color: #000;"></i>
         </button>
     </div>
 
@@ -162,7 +156,7 @@
         <a href="MI.html">Mock Interviews</a>
         <a href="AT.html">AptiTest</a>
         <a href="CC.html">Coding Challenges</a>
-	<a href="PD.html">Progress Dashboard</a>
+        <a href="PD.html">Progress Dashboard</a>
         <a href="AI.html">Alumni Interaction</a>
         <a href="about.html">About Us</a>
     </div>
@@ -240,7 +234,7 @@
                 document.getElementById('outputSection').style.display = 'block';
             }
         });
-	//try
+
         nextChallengeBtn.addEventListener('click', function () {
             alert('Next challenge coming soon!');
         });

@@ -13,7 +13,9 @@
             font-family: 'Arial', sans-serif;
             color: #fff;
             display: flex;
+            flex-direction: column;
             min-height: 100vh;
+            align-items: center;
         }
 
         /* Banner */
@@ -24,12 +26,11 @@
             width: 100%;
             height: 60px;
             background-color: #c7ea46;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-            z-index: 1000;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0 15px;
+            z-index: 1000;
         }
 
         .banner img {
@@ -45,7 +46,6 @@
             width: 200px;
             height: calc(100% - 60px);
             background-color: #c7ea46;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
             transition: left 0.3s ease;
             z-index: 1000;
         }
@@ -68,7 +68,7 @@
             color: #c7ea46;
         }
 
-        .sidebar .logout-btn {
+        .logout-btn {
             position: absolute;
             bottom: 20px;
             left: 20px;
@@ -92,15 +92,15 @@
 
         /* Content Area */
         .content {
-            margin-left: 0;
             flex: 1;
-            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
             margin-top: 80px;
+            width: 100%;
             transition: margin-left 0.3s ease;
-        }
-
-        .content.hamburger-active {
-            margin-left: 200px; /* Offset for the sidebar when active */
         }
 
         .content h1 {
@@ -108,13 +108,13 @@
             font-weight: bold;
             color: #c7ea46;
             margin-bottom: 20px;
-            text-align: center;
         }
 
         .alumni-list {
             display: flex;
             flex-direction: column;
             align-items: center;
+            width: 100%;
         }
 
         .alumni-card {
@@ -124,8 +124,8 @@
             margin: 15px;
             width: 80%;
             max-width: 600px;
-            color: #fff;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
         }
 
         .alumni-card h3 {
@@ -144,7 +144,7 @@
             color: #fff;
             padding: 20px;
             text-align: center;
-            margin-top: auto;
+            width: 100%;
         }
 
         footer a {
@@ -207,7 +207,6 @@
                 <p>Company: SoftWorks</p>
                 <p>Email: michael@softworks.com</p>
             </div>
-            <!-- Add more alumni cards here -->
         </div>
     </div>
 
@@ -225,15 +224,13 @@
         // Toggle sidebar visibility when hamburger icon is clicked
         hamburger.addEventListener('click', () => {
             sidebar.classList.toggle('active');
-            content.classList.toggle('hamburger-active');
         });
 
         function logout() {
             alert('You have logged out!');
-            window.location.href = 'index.html'; // Redirect to the login page
+            window.location.href = 'index.html'; // Redirect to login page
         }
     </script>
 </body>
 
 </html>
-

@@ -7,55 +7,104 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
         body {
-            background-color: #000;
+            background: url('./images/6.jpg') no-repeat center center fixed;
+            /* Background image */
+            background-size: cover;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
             color: #fff;
-            font-family: Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
-            margin: 0;
+        }
+
+        .overlay {
+            background: rgba(0, 0, 0, 0.8);
+            /* Black transparent overlay */
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
         }
 
         .login-container {
-            background-color: #333;
-            padding: 30px;
-            border-radius: 10px;
-            box-shadow: 0 0 10px rgba(255, 255, 255, 0.2);
-            text-align: center;
-            width: 300px;
+            background-color: rgba(46, 46, 46, 0.9);
+            /* Transparent dark gray background */
+            color: #fff;
+            border: 1px solid #c7ea46;
+            /* Lime green border */
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.6);
         }
 
         .login-container h2 {
-            color: #c7ea46;
-            margin-bottom: 20px;
+            color: #fff; /* Set color to white */
+            margin-bottom: 25px;
+            text-align: center;
         }
 
         .form-control {
+            background-color: rgba(255, 255, 255, 0.8);
+            /* Semi-transparent white for inputs */
+            border: 1px solid #c7ea46;
+            /* Lime green border */
+            color: #000;
             margin-bottom: 15px;
         }
 
         .btn-login {
             background-color: #c7ea46;
+            /* Lime green button */
             color: #000;
-            font-weight: bold;
+            /* Black text */
+            font-size: 1rem;
+            padding: 12px 15px;
             border: none;
-            padding: 10px;
+            border-radius: 20px;
             width: 100%;
-            cursor: pointer;
+            transition: transform 0.2s, background-color 0.3s;
         }
 
         .btn-login:hover {
-            background-color: #a5c435;
+            background-color: #000;
+            /* Black hover effect */
+            color: #fff;
+            /* White text on hover */
+            transform: scale(1.05);
+        }
+
+        .login-container .form-group {
+            margin-bottom: 20px;
+        }
+
+        .login-container a {
+            color: #c7ea46;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
+
+        .login-container a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
+    <div class="overlay"></div>
     <div class="login-container">
         <h2>Admin Login</h2>
         <form onsubmit="return adminLogin()">
-            <input type="text" id="adminUsername" class="form-control" placeholder="Username" required>
-            <input type="password" id="adminPassword" class="form-control" placeholder="Password" required>
+            <div class="form-group">
+                <input type="text" id="adminUsername" class="form-control" placeholder="Username" required>
+            </div>
+            <div class="form-group">
+                <input type="password" id="adminPassword" class="form-control" placeholder="Password" required>
+            </div>
             <button type="submit" class="btn btn-login">Login</button>
         </form>
     </div>
@@ -67,7 +116,7 @@
 
             if (username === "admin" && password === "admin123") {
                 alert("Login successful!");
-                window.location.href = "admin_dashboard.html"; // Redirect to dashboard
+                window.location.href = "ADC.html"; // Redirect to dashboard
                 return false;
             } else {
                 alert("Invalid Credentials!");
