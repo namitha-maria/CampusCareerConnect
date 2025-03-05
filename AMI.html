@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni - Campus Career Connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Banner */
+        .banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #c7ea46;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 15px;
+        }
+
+        .banner img {
+            width: 100px;
+            height: 100px;
+            cursor: pointer;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            background-color: #c7ea46;
+            border: none;
+            border-radius: 50%;
+            padding: 5px;
+            font-size: 1.5rem;
+            color: #000;
+            cursor: pointer;
+            width: 30px;
+            height: 30px;
+            text-align: center;
+        }
+
+        .logout-btn:hover {
+            background-color: #000;
+            color: #fff;
+        }
+
+        /* Sidebar Menu */
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: -200px;
+            width: 200px;
+            height: calc(100% - 60px);
+            background-color: #c7ea46;
+            overflow: hidden;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #000;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #000;
+            color: #c7ea46;
+        }
+
+        /* Menu Button */
+        .menu-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1100;
+            background-color: #c7ea46;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            transition: margin-left 0.3s ease;
+            margin-top: 80px;
+        }
+
+        .content h1 {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #c7ea46;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .content p {
+            font-size: 1.2rem;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        .video-placeholder {
+            background-color: #333;
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+            margin: 20px auto;
+            border: 2px dashed #c7ea46;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #c7ea46;
+        }
+
+        .feedback-form {
+            background-color: #fff;
+            color: #000;
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 500px;
+            margin: 30px auto;
+            box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.6);
+        }
+
+        .form-label {
+            font-weight: bold;
+        }
+
+        .btn-custom {
+            background-color: #c7ea46;
+            color: #000;
+            font-size: 1rem;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            transition: transform 0.2s ease-in-out, background-color 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #000;
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #000;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+            margin-top: auto;
+        }
+
+        footer a {
+            color: #c7ea46;
+            text-decoration: none;
+        }
+
+        footer a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Banner -->
+    <div class="banner">
+        <img src="images/8-removebg-preview.png" alt="Logo">
+    </div>
+
+    <!-- Logout Button -->
+    <button class="logout-btn" onclick="window.location.href='logout.html'">⎯</button>
+
+    <!-- Menu Button -->
+    <button class="menu-btn" id="menuBtn">&#9776;</button>
+
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+	    <a href="Home3.html">Home</a>
+        <a href="MI.html">Mock Interview</a>
+        <a href="QA.html">Q&A</a>
+        <a href="AD.html">Alumni Directory</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1>Alumni Dashboard</h1>
+        <p>As an alumni, you can review student mock interviews, rate them, and view their feedback!</p>
+
+        <div class="video-placeholder">
+            Video Placeholder (Integration Coming Soon)
+        </div>
+
+        <div class="feedback-form">
+            <h3>Rate the candidate</h3>
+            <div class="mb-3">
+                <label for="studentName" class="form-label">Student Name</label>
+                <input type="text" id="studentName" class="form-control" placeholder="Enter student's name">
+            </div>
+            <div class="mb-3">
+                <label for="rating" class="form-label">Rate the candidate (1-5)</label>
+                <input type="number" id="rating" class="form-control" min="1" max="5" placeholder="Enter a rating">
+            </div>
+            <button type="submit" class="btn btn-custom w-100 mt-3">Submit Rating</button>
+        </div>
+
+        <div class="feedback-form">
+            <h3>View Feedback</h3>
+            <div class="mb-3">
+                <label for="studentFeedback" class="form-label">Student Feedback</label>
+                <textarea id="studentFeedback" class="form-control" rows="4" placeholder="Read the feedback" disabled></textarea>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Section -->
+    <footer>
+        <p>&copy; 2025 Campus Career Connect. All Rights Reserved.</p>
+        <p>Contact us: <a href="mailto:info@campuscareerconnect.com">info@campuscareerconnect.com</a></p>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+    </script>
+</body>
+
+</html>

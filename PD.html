@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Progress Dashboard - Campus Career Connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            background-color: #c7ea46;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .banner img {
+            height: 70px;
+            max-width: 100%;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+
+        .logout-btn img {
+            width: 30px;
+            height: 30px;
+            object-fit: contain;
+        }
+
+        /* Sidebar Menu */
+        .sidebar {
+            position: fixed;
+            top: 80px;
+            left: -200px;
+            width: 200px;
+            height: calc(100% - 80px);
+            background-color: #c7ea46;
+            overflow: hidden;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            transition: left 0.3s ease;
+            z-index: 1000;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #000;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #000;
+            color: #c7ea46;
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1200;
+            background-color: #c7ea46;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .content {
+            flex: 1;
+            padding: 100px 20px 20px;
+            max-width: 1200px;
+            margin: auto;
+        }
+
+        .progress-container {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .progress-card {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 10px 0;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .progress-bar {
+            background-color: #c7ea46;
+            height: 30px;
+        }
+
+        .chart-container {
+            background-color: #333;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            width: 100% !important;
+            height: 60% !important; /* Adjusting the height to 60% of the container height */
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar Menu -->
+    <div class="sidebar" id="sidebar">
+        <a href="Home2.html">Home</a>
+        <a href="MI.html">Mock Interviews</a>
+        <a href="AT.html">AptiTest</a>
+        <a href="CC.html">Coding Challenges</a>
+	<a href="PD.html">Progress Dashboard</a>
+        <a href="AI.html">Alumni Interaction</a>
+        <a href="about.html">About Us</a>
+    </div>
+
+    <div class="banner">
+        <button class="menu-btn" id="menuBtn">☰</button>
+        <img src="D:\Project\CCC\images\8-removebg-preview.png" alt="Campus Career Connect Logo">
+        <button class="logout-btn" onclick="logout()">
+            <img src="D:\Project\CCC\images\9-removebg-preview.png" alt="Logout">
+        </button>
+    </div>
+
+    <div class="content">
+        <div class="row">
+            <div class="col-md-5">
+                <div class="progress-container">
+                    <div class="progress-card">
+                        <h5>Aptitude Test Progress</h5>
+                        <div class="progress">
+                            <div id="aptitudeProgress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p id="aptitudeScoreText">Loading...</p>
+                    </div>
+
+                    <div class="progress-card">
+                        <h5>Mock Interview Progress</h5>
+                        <div class="progress">
+                            <div id="mockInterviewProgress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                        </div>
+                        <p id="mockInterviewScoreText">Loading...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-7">
+                <div class="chart-container">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        function fetchScores() {
+            setTimeout(() => {
+                let aptitudeScore = Math.floor(Math.random() * 85);
+                let mockInterviewScore = Math.floor(Math.random() * 75);
+
+                document.getElementById('aptitudeProgress').style.width = aptitudeScore + '%';
+                document.getElementById('aptitudeScoreText').innerText = `Score: ${aptitudeScore}/100`;
+
+                document.getElementById('mockInterviewProgress').style.width = mockInterviewScore + '%';
+                document.getElementById('mockInterviewScoreText').innerText = `Score: ${mockInterviewScore}/100`;
+
+                renderChart(aptitudeScore, mockInterviewScore);
+            }, 1000);
+        }
+
+        function renderChart(aptitude, mockInterview) {
+            const ctx = document.getElementById('progressChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Attempt 1', 'Attempt 2', 'Attempt 3', 'Attempt 4', 'Attempt 5'],
+                    datasets: [
+                        {
+                            label: 'Aptitude Test',
+                            data: [aptitude - 10, aptitude - 5, aptitude, aptitude + 5, aptitude + 10],
+                            borderColor: '#c7ea46',
+                            fill: false
+                        },
+                        {
+                            label: 'Mock Interview',
+                            data: [mockInterview - 10, mockInterview - 5, mockInterview, mockInterview + 5, mockInterview + 10],
+                            borderColor: '#ff5733',
+                            fill: false
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false
+                }
+            });
+        }
+
+        window.onload = fetchScores;
+		
+    function logout() {
+        // Add any necessary logout functionality here
+        alert('You have logged out!');
+        window.location.href = 'index.html';  // Redirect to login page (replace with your actual login page)
+    }
+
+
+    </script>
+</body>
+
+</html>

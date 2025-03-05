@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Campus Career Connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding-top: 60px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Banner */
+        .banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #c7ea46;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            z-index: 1000;
+        }
+
+        .banner img {
+            height: 50px;
+        }
+
+        /* Logout Button */
+        .logout-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: absolute;
+            right: 20px;
+        }
+
+        .logout-btn img {
+            height: 30px;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: -220px;
+            width: 200px;
+            height: calc(100% - 60px);
+            background-color: #c7ea46;
+            transition: left 0.3s ease;
+            padding-top: 10px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px;
+            color: #000;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #000;
+            color: #c7ea46;
+        }
+
+        /* Hamburger Menu */
+        .menu-btn {
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            position: fixed;
+            top: 15px;
+            left: 15px;
+            z-index: 1001;
+        }
+
+        /* Content */
+        .content {
+            text-align: center;
+            padding: 20px;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+
+        .content h1 {
+            color: #c7ea46;
+            margin-bottom: 30px;
+            font-size: 2.5rem;
+        }
+
+        /* Dashboard Cards */
+        .dashboard-card {
+            background-color: #222;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+            text-align: center;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .dashboard-card h3 {
+            color: #c7ea46;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-card p {
+            font-size: 1rem;
+            color: #ddd;
+        }
+
+        .dashboard-card img {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .dashboard-card a {
+            display: inline-block;
+            background-color: #c7ea46;
+            color: #000;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: 0.3s;
+        }
+
+        .dashboard-card a:hover {
+            background-color: #000;
+            color: #c7ea46;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Banner -->
+    <div class="banner">
+        <img src="D:/Project/CCC/images/8-removebg-preview.png" alt="Logo">
+        <button class="logout-btn" onclick="logout()">
+            <img src="D:/Project/CCC/images/9-removebg-preview.png" alt="Logout">
+        </button>
+    </div>
+
+    <!-- Sidebar Menu -->
+    <button class="menu-btn" id="menuBtn">&#9776;</button>
+    <div class="sidebar" id="sidebar">
+        <a href="ADC.html">Dashboard</a>
+        <a href="AT.html">Manage Aptitude Tests</a>
+        <a href="CC.html">Manage Coding Challenges</a>
+        <a href="PD.html">View Student Progress</a>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content">
+        <h1>Admin Dashboard</h1>
+
+        <div class="dashboard-card">
+            <img src="D:/Project/CCC/images/2.webp" alt="Aptitude Test">
+            <h3>Manage Aptitude Tests</h3>
+            <p>Add, update, or remove aptitude test questions for students.</p>
+            <a href="AT.html">Go to Aptitude Tests</a>
+        </div>
+
+        <div class="dashboard-card">
+            <img src="D:/Project/CCC/images/3.jpg" alt="Coding Challenges">
+            <h3>Manage Coding Challenges</h3>
+            <p>Add or update coding challenges for students.</p>
+            <a href="CC.html">Go to Coding Challenges</a>
+        </div>
+
+        <div class="dashboard-card">
+            <img src="D:/Project/CCC/images/7.png" alt="Student Progress">
+            <h3>View Student Progress</h3>
+            <p>Monitor the performance of students.</p>
+            <a href="PD.html">View Progress</a>
+        </div>
+
+        <!-- New Mock Interview Card -->
+        <div class="dashboard-card">
+            <img src="D:/Project/CCC/images/1.png" alt="Mock Interview">
+            <h3>Manage Mock Interviews</h3>
+            <p>Set up mock interviews for students to practice.</p>
+            <a href="MI.html">Go to Mock Interviews</a>
+        </div>
+    </div>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        function logout() {
+            alert('Logging out...');
+            window.location.href = 'admin_login.html';
+        }
+    </script>
+</body>
+
+</html>

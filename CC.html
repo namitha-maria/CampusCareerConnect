@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CodeCrack - Campus Career Connect</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background-color: #c7ea46;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 15px;
+        }
+
+        .banner img {
+            height: 90px;
+            cursor: pointer;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 60px;
+            left: -250px;
+            width: 250px;
+            height: calc(100% - 60px);
+            background-color: #c7ea46;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+            transition: left 0.3s ease;
+            z-index: 1100;
+        }
+
+        .sidebar.active {
+            left: 0;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            text-decoration: none;
+            color: #000;
+            font-weight: bold;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #000;
+            color: #c7ea46;
+        }
+
+        .menu-btn {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            z-index: 1200;
+            background-color: #c7ea46;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #000;
+        }
+
+        .logo.right {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background-color: transparent;
+            padding: 0;
+            border: none; /* Remove border */
+            outline: none; /* Remove focus outline */
+            cursor: pointer;
+        }
+
+        .challenge-section {
+            margin-top: 80px;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #222;
+            color: #c7ea46;
+            border: none;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        .btn-custom {
+            background-color: #c7ea46;
+            color: #000;
+            font-weight: bold;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            transition: transform 0.2s, background-color 0.3s;
+        }
+
+        .btn-custom:hover {
+            background-color: #000;
+            color: #c7ea46;
+            transform: scale(1.1);
+        }
+
+        .code-editor {
+            background-color: #2d2d2d;
+            color: #f8f8f2;
+            border: 1px solid #444;
+            border-radius: 10px;
+            padding: 15px;
+            font-family: monospace;
+            width: 100%;
+            height: 200px;
+            overflow: auto;
+            resize: none; /* Disable resizing */
+        }
+
+        footer {
+            background-color: #000;
+            color: #fff;
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="banner">
+        <img src="D:\Project\CCC\images\8-removebg-preview.png" alt="Logo">
+        <button class="logo right" onclick="logout()">
+            <i class="bi bi-box-arrow-right" style="font-size: 1.5rem; color: #000;"></i>
+        </button>
+    </div>
+
+    <button class="menu-btn" id="menuBtn">&#9776;</button>
+
+    <div class="sidebar" id="sidebar">
+        <a href="Home2.html">Home</a>
+        <a href="MI.html">Mock Interviews</a>
+        <a href="AT.html">AptiTest</a>
+        <a href="CC.html">Coding Challenges</a>
+        <a href="PD.html">Progress Dashboard</a>
+        <a href="AI.html">Alumni Interaction</a>
+        <a href="about.html">About Us</a>
+    </div>
+
+    <div class="container challenge-section">
+        <div class="text-center mb-5">
+            <h1 class="text-lime">Coding Challenges</h1>
+            <p>Hone your coding skills with daily challenges.</p>
+        </div>
+        <div class="row">
+            <div class="col-md-10 mx-auto">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Challenge: Reverse a String</h5>
+                        <p>Write a function that takes a string as input and returns the string reversed.</p>
+                        <p><strong>Example:</strong></p>
+                        <pre>
+                            Input: "hello"
+                            Output: "olleh"
+                        </pre>
+                        <textarea id="codeEditor" class="code-editor" placeholder="// Write your code here..."></textarea>
+                        <div class="text-center mt-4">
+                            <button id="runCode" class="btn btn-custom">Run Code</button>
+                        </div>
+                        <div id="outputSection" class="mt-4" style="display: none;">
+                            <h5>Output:</h5>
+                            <pre id="outputDisplay"
+                                style="background-color: #000; color: #c7ea46; padding: 10px; border: 1px solid #444; border-radius: 5px;"></pre>
+                        </div>
+                        <div class="text-center mt-4">
+                            <button id="nextChallenge" class="btn btn-custom">Next Challenge</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>&copy; 2025 Campus Career Connect. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const menuBtn = document.getElementById('menuBtn');
+        const sidebar = document.getElementById('sidebar');
+        const nextChallengeBtn = document.getElementById('nextChallenge');
+
+        menuBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
+        });
+
+        function logout() {
+            alert('You have logged out!');
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('runCode').addEventListener('click', function () {
+            const code = document.getElementById('codeEditor').value;
+
+            // Test input for the challenge
+            const input = "hello";
+
+            // Placeholder for code execution
+            try {
+                // Evaluate the user's code
+                const userFunction = new Function('input', code + '\nreturn reverseString(input);');
+                const result = userFunction(input);
+
+                // Display output
+                document.getElementById('outputDisplay').textContent = `Input: "${input}"\nOutput: "${result}"`;
+                document.getElementById('outputSection').style.display = 'block';
+            } catch (error) {
+                // Display errors
+                document.getElementById('outputDisplay').textContent = `Error: ${error.message}`;
+                document.getElementById('outputSection').style.display = 'block';
+            }
+        });
+
+        nextChallengeBtn.addEventListener('click', function () {
+            alert('Next challenge coming soon!');
+        });
+    </script>
+</body>
+
+</html>
