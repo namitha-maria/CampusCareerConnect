@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Questions</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            margin: 0;
+        }
+
+        .banner {
+            background-color: #c7ea46;
+            padding: 20px;
+            color: #000;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            position: relative;
+            text-align: center;
+        }
+
+        .banner h1 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            width: 100px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            height: 30px;
+            cursor: pointer;
+        }
+
+        .menu {
+            background-color: #333;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .menu a {
+            color: #c7ea46;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.2rem;
+        }
+
+        .menu a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .btn-primary {
+            background-color: #c7ea46;
+            border: none;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .btn-primary:hover {
+            background-color: #a8c63e;
+        }
+
+        .question-list {
+            margin-top: 30px;
+        }
+
+        .question-card {
+            background-color: #333;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .correct-answer {
+            color: #c7ea46;
+            font-weight: bold;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Banner -->
+    <div class="banner">
+        <img src="D:/Project/CCC/images/8-removebg-preview.png" alt="Logo" class="logo">
+        <img src="D:/Project/CCC/images/9-removebg-preview.png" alt="Logout" class="logout-btn" onclick="logout()">
+        <h1>Admin Panel - Manage Questions</h1>
+    </div>
+
+    <!-- Menu Bar -->
+    <div class="menu">
+        <a href="ADC.html">Dashboard</a>
+        <a href="manage-questions.html">CodeCrack</a>
+        <a href="view-progress.html">Progress</a>
+    </div>
+
+    <!-- Question Management -->
+    <div class="container">
+        <h2>Add a New Question</h2>
+        <form id="questionForm">
+            <div class="form-group">
+                <label for="question">Question:</label>
+                <input type="text" id="question" class="form-control" required>
+            </div>
+
+            <div class="form-group">
+                <label>Options:</label>
+                <div id="optionsContainer">
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control option-input" placeholder="Option 1" required>
+                        <div class="input-group-text">
+                            <input type="radio" name="correctAnswer" value="0" required>
+                        </div>
+                    </div>
+                    <div class="input-group mb-2">
+                        <input type="text" class="form-control option-input" placeholder="Option 2" required>
+                        <div class="input-group-text">
+                            <input type="radio" name="correctAnswer" value="1" required>
+                        </div>
+                    </div>
+                </div>
+                <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addOption()">Add Option</button>
+            </div>
+
+            <button type="submit" class="btn btn-primary">Add Question</button>
+        </form>
+
+        <!-- Question List -->
+        <div class="question-list">
+            <h2>Existing Questions</h2>
+            <div id="questionsContainer"></div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer style="text-align: center; padding: 20px; background-color: #000; color: #fff;">
+        <p>&copy; 2025 Campus Career Connect. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        let questions = [];
+
+        document.getElementById("questionForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            let questionText = document.getElementById("question").value;
+            let options = Array.from(document.getElementsByClassName("option-input")).map(input => input.value);
+            let correctIndex = document.querySelector("input[name='correctAnswer']:checked").value;
+
+            let newQuestion = {
+                text: questionText,
+                options: options,
+                correct: correctIndex
+            };
+
+            questions.push(newQuestion);
+            updateQuestionList();
+            this.reset();
+        });
+
+        function addOption() {
+            let optionsContainer = document.getElementById("optionsContainer");
+            let optionCount = document.getElementsByClassName("option-input").length;
+
+            let optionDiv = document.createElement("div");
+            optionDiv.classList.add("input-group", "mb-2");
+
+            let optionInput = document.createElement("input");
+            optionInput.type = "text";
+            optionInput.classList.add("form-control", "option-input");
+            optionInput.placeholder = `Option ${optionCount + 1}`;
+            optionInput.required = true;
+
+            let radioDiv = document.createElement("div");
+            radioDiv.classList.add("input-group-text");
+
+            let radioInput = document.createElement("input");
+            radioInput.type = "radio";
+            radioInput.name = "correctAnswer";
+            radioInput.value = optionCount;
+            radioInput.required = true;
+
+            radioDiv.appendChild(radioInput);
+            optionDiv.appendChild(optionInput);
+            optionDiv.appendChild(radioDiv);
+            optionsContainer.appendChild(optionDiv);
+        }
+
+        function updateQuestionList() {
+            let container = document.getElementById("questionsContainer");
+            container.innerHTML = "";
+
+            questions.forEach((q, index) => {
+                let questionCard = document.createElement("div");
+                questionCard.classList.add("question-card");
+
+                let questionText = document.createElement("p");
+                questionText.textContent = `${index + 1}. ${q.text}`;
+
+                let optionsList = document.createElement("ul");
+                q.options.forEach((option, i) => {
+                    let listItem = document.createElement("li");
+                    listItem.textContent = option;
+                    optionsList.appendChild(listItem);
+                });
+
+                questionCard.appendChild(questionText);
+                questionCard.appendChild(optionsList);
+                container.appendChild(questionCard);
+            });
+        }
+
+        function logout() {
+            alert('You have logged out!');
+            window.location.href = 'index.html';
+        }
+    </script>
+
+</body>
+</html>

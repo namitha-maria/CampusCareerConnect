@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - View Student Progress</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: #c7ea46;
+        }
+
+        .banner {
+            background-color: #c7ea46;
+            padding: 20px;
+            color: #000;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .banner h1 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            width: 100px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            height: 30px;
+            cursor: pointer;
+        }
+
+        .menu {
+            background-color: #333;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .menu a {
+            color: #c7ea46;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.2rem;
+        }
+
+        .menu a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #222;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .card h3 {
+            color: #c7ea46;
+        }
+
+        .btn-primary {
+            background-color: #c7ea46;
+            border: none;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background-color: #a0c236;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: none;
+            background-color: #333;
+            color: #c7ea46;
+            border: 1px solid #c7ea46;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Banner Section -->
+    <div class="banner">
+        <img src="D:/Project/CCC/images/8-removebg-preview.png" alt="Campus Career Connect Logo" class="logo">
+        <img src="D:/Project/CCC/images/9-removebg-preview.png" alt="Logout Button" class="logout-btn" onclick="logout()">
+        <h1>View Student Progress</h1>
+    </div>
+
+    <!-- Menu Section -->
+    <div class="menu">
+        <a href="ADC.html">Dashboard</a>
+        <a href="AdminAT.html">Aptitude</a>
+        <a href="AdminCC.html">Coding Challenges</a>
+    </div>
+
+    <!-- Student Progress Section -->
+    <div class="container">
+        <h2>Search Student Progress</h2>
+        <div class="card">
+            <label for="studentUID" style="color: #c7ea46;">Enter Student UID:</label>
+            <input type="text" id="studentUID" placeholder="Enter Student UID">
+            <button class="btn btn-primary mt-3" onclick="searchProgress()">Search</button>
+        </div>
+
+        <h2>Student Progress Details</h2>
+        <div id="student-progress" class="card">
+            <!-- Student progress will appear here -->
+        </div>
+    </div>
+
+    <script>
+        function logout() {
+            alert('You have logged out!');
+            window.location.href = 'index.html';
+        }
+
+        function searchProgress() {
+            let studentUID = document.getElementById('studentUID').value.trim();
+
+            if (!studentUID) {
+                alert("Please enter a valid Student UID.");
+                return;
+            }
+
+            let students = JSON.parse(localStorage.getItem('studentProgress')) || {};
+            let studentData = students[studentUID];
+
+            let progressContainer = document.getElementById('student-progress');
+            progressContainer.innerHTML = '';
+
+            if (studentData) {
+                let progressCard = document.createElement('div');
+                progressCard.classList.add('card');
+                progressCard.innerHTML = `
+                    <h3>Student UID: ${studentUID}</h3>
+                    <p><strong>Mock Interview Score:</strong> ${studentData.mockInterviewScore}</p>
+                    <p><strong>Aptitude Test Score:</strong> ${studentData.aptitudeScore}</p>
+                    <p><strong>Coding Challenge Score:</strong> ${studentData.codingScore}</p>
+                `;
+                progressContainer.appendChild(progressCard);
+            } else {
+                progressContainer.innerHTML = `<p style="color: #c7ea46;">No progress found for Student UID: ${studentUID}</p>`;
+            }
+        }
+
+        // Example Data for Testing (Remove this in final implementation)
+        localStorage.setItem('studentProgress', JSON.stringify({
+            "12345": { mockInterviewScore: "85%", aptitudeScore: "90%", codingScore: "80%" },
+            "67890": { mockInterviewScore: "78%", aptitudeScore: "88%", codingScore: "92%" }
+        }));
+    </script>
+
+</body>
+
+</html>

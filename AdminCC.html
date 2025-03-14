@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Manage Coding Challenges</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #000;
+            margin: 0;
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+        }
+
+        .banner {
+            background-color: #c7ea46;
+            padding: 20px;
+            color: #000;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            text-align: center;
+        }
+
+        .banner h1 {
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .logo {
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            width: 100px;
+        }
+
+        .logout-btn {
+            position: absolute;
+            top: 50%;
+            right: 20px;
+            transform: translateY(-50%);
+            height: 30px;
+            cursor: pointer;
+        }
+
+        .menu {
+            background-color: #333;
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .menu a {
+            color: #c7ea46;
+            text-decoration: none;
+            margin: 0 15px;
+            font-size: 1.2rem;
+        }
+
+        .menu a:hover {
+            text-decoration: underline;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #222;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.1);
+        }
+
+        .card h3 {
+            color: #c7ea46;
+        }
+
+        .btn-primary {
+            background-color: #c7ea46;
+            border: none;
+            color: #000;
+        }
+
+        .btn-primary:hover {
+            background-color: #a0c236;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            border-radius: 5px;
+            border: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Banner Section -->
+    <div class="banner">
+        <img src="D:/Project/CCC/images/8-removebg-preview.png" alt="Campus Career Connect Logo" class="logo">
+        <img src="D:/Project/CCC/images/9-removebg-preview.png" alt="Logout Button" class="logout-btn" onclick="logout()">
+        <h1>Manage Coding Challenges</h1>
+    </div>
+
+    <!-- Menu Section -->
+    <div class="menu">
+        <a href="ADC.html">Dashboard</a>
+        <a href="AdminAT.html">Aptitude</a>
+        <a href="manage_coding.html">Progress</a>
+    </div>
+
+    <!-- Coding Challenges Section -->
+    <div class="container">
+        <h2>Existing Coding Challenges</h2>
+        <div id="coding-challenges">
+            <!-- List of existing coding challenges will appear here -->
+        </div>
+
+        <h2>Add New Coding Challenge</h2>
+   <div class="card" style="color: #c7ea46;">
+    <form id="addChallengeForm">
+        <label for="title" style="color: #c7ea46;">Challenge Title:</label>
+        <input type="text" id="title" required style="background-color: #333; color: #c7ea46; border: 1px solid #c7ea46;">
+
+        <label for="description" style="color: #c7ea46;">Description:</label>
+        <textarea id="description" rows="4" required style="background-color: #333; color: #c7ea46; border: 1px solid #c7ea46;"></textarea>
+
+        <label for="inputFormat" style="color: #c7ea46;">Input Format:</label>
+        <textarea id="inputFormat" rows="2" required style="background-color: #333; color: #c7ea46; border: 1px solid #c7ea46;"></textarea>
+
+        <label for="expectedOutput" style="color: #c7ea46;">Expected Output (Hidden from Students):</label>
+        <textarea id="expectedOutput" rows="2" required style="background-color: #333; color: #c7ea46; border: 1px solid #c7ea46;"></textarea>
+
+        <button type="submit" class="btn mt-3" style="background-color: #c7ea46; color: #000; border: none;">Add Challenge</button>
+    </form>
+</div>
+
+    <script>
+        function logout() {
+            alert('You have logged out!');
+            window.location.href = 'index.html';
+        }
+
+        document.getElementById('addChallengeForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            let title = document.getElementById('title').value;
+            let description = document.getElementById('description').value;
+            let inputFormat = document.getElementById('inputFormat').value;
+            let expectedOutput = document.getElementById('expectedOutput').value;
+
+            let challenge = {
+                title: title,
+                description: description,
+                inputFormat: inputFormat,
+                expectedOutput: expectedOutput // Hidden from students
+            };
+
+            let challenges = JSON.parse(localStorage.getItem('codingChallenges')) || [];
+            challenges.push(challenge);
+            localStorage.setItem('codingChallenges', JSON.stringify(challenges));
+
+            displayChallenges();
+            document.getElementById('addChallengeForm').reset();
+        });
+
+        function displayChallenges() {
+            let challenges = JSON.parse(localStorage.getItem('codingChallenges')) || [];
+            let challengeList = document.getElementById('coding-challenges');
+            challengeList.innerHTML = '';
+
+            challenges.forEach((challenge, index) => {
+                let challengeCard = document.createElement('div');
+                challengeCard.classList.add('card');
+                challengeCard.innerHTML = `
+                    <h3>${challenge.title}</h3>
+                    <p><strong>Description:</strong> ${challenge.description}</p>
+                    <p><strong>Input Format:</strong> ${challenge.inputFormat}</p>
+                    <p style="display: none;"><strong>Expected Output (Hidden):</strong> ${challenge.expectedOutput}</p>
+                    <button class="btn btn-danger" onclick="deleteChallenge(${index})">Delete</button>
+                `;
+                challengeList.appendChild(challengeCard);
+            });
+        }
+
+        function deleteChallenge(index) {
+            let challenges = JSON.parse(localStorage.getItem('codingChallenges')) || [];
+            challenges.splice(index, 1);
+            localStorage.setItem('codingChallenges', JSON.stringify(challenges));
+            displayChallenges();
+        }
+
+        displayChallenges();
+    </script>
+
+</body>
+
+</html>
