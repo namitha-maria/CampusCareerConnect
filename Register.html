@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
         body {
-            background: url('6.jpg') no-repeat center center fixed; /* Background image */
+            background: url('6.jpg') no-repeat center center fixed; 
             background-size: cover;
             margin: 0;
             font-family: 'Arial', sans-serif;
@@ -30,14 +30,13 @@
             border: 1px solid #c7ea46;
             border-radius: 15px;
             padding: 25px;
-            max-width: 400px;
-            margin: 100px auto;
+            max-width: 450px;
+            margin: 80px auto;
             box-shadow: 5px 5px 20px rgba(0, 0, 0, 0.6);
         }
 
         .form-label {
             font-weight: bold;
-            color: #fff;
         }
 
         .form-control,
@@ -73,6 +72,10 @@
         .back-link:hover {
             text-decoration: underline;
         }
+
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -86,9 +89,10 @@
                     <option value="" disabled selected>Select your role</option>
                     <option value="Student">Student</option>
                     <option value="Alumni">Alumni</option>
-                    <option value="Admin">Admin</option> <!-- Added Admin option -->
+                    <option value="Admin">Admin</option>
                 </select>
             </div>
+
             <div class="mb-3">
                 <label for="fullName" class="form-label">Full Name</label>
                 <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
@@ -101,6 +105,55 @@
                 <label for="password" class="form-label">Password</label>
                 <input type="password" class="form-control" id="password" placeholder="Create a password" required>
             </div>
+
+            <!-- Additional Fields (Moved Below Existing Ones) -->
+            <div id="studentFields" class="hidden">
+                <div class="mb-3">
+                    <label for="batchYear" class="form-label">Batch Year</label>
+                    <select class="form-select" id="batchYear">
+                        <option value="" disabled selected>Select batch year</option>
+                        <script>
+                            for (let year = 2020; year <= new Date().getFullYear() + 4; year++) {
+                                document.write(`<option value="${year}">${year}</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
+            </div>
+
+            <div id="alumniFields" class="hidden">
+                <div class="mb-3">
+                    <label for="gradYear" class="form-label">Graduation Year</label>
+                    <select class="form-select" id="gradYear">
+                        <option value="" disabled selected>Select graduation year</option>
+                        <script>
+                            for (let year = 2000; year <= new Date().getFullYear(); year++) {
+                                document.write(`<option value="${year}">${year}</option>`);
+                            }
+                        </script>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="company" class="form-label">Company</label>
+                    <input type="text" class="form-control" id="company" placeholder="Enter your company">
+                </div>
+                <div class="mb-3">
+                    <label for="jobDesc" class="form-label">Job Description</label>
+                    <input type="text" class="form-control" id="jobDesc" placeholder="Enter your job role">
+                </div>
+                <div class="mb-3">
+                    <label for="bio" class="form-label">Short Bio</label>
+                    <textarea class="form-control" id="bio" rows="2" placeholder="Tell us about yourself"></textarea>
+                </div>
+            </div>
+
+            <div id="adminFields" class="hidden">
+                <div class="mb-3">
+                    <label for="position" class="form-label">Position</label>
+                    <input type="text" class="form-control" id="position" placeholder="Enter your position">
+                </div>
+            </div>
+
             <button type="submit" class="btn btn-custom">Register</button>
         </form>
         <p class="text-center mt-3">
@@ -109,42 +162,17 @@
     </div>
 
     <script>
-        document.getElementById('registrationForm').addEventListener('submit', function (e) {
-            e.preventDefault();
-            
-            // Get form values
-            const fullName = document.getElementById('fullName').value;
-            const email = document.getElementById('email').value;
-            const role = document.getElementById('role').value;
-            const password = document.getElementById('password').value;
-            
-            // Validate email based on role
-            let emailRegex;
-            if (role === "Student" || role === "Alumni") {
-                emailRegex = /^[a-zA-Z0-9._%+-]+@rajagiri\.edu\.in$/;
-            } else if (role === "Admin") {
-                emailRegex = /^[a-zA-Z0-9._%+-]+@rajagiritech\.edu\.in$/;
-            }
+        document.getElementById('role').addEventListener('change', function () {
+            document.getElementById('studentFields').classList.add('hidden');
+            document.getElementById('alumniFields').classList.add('hidden');
+            document.getElementById('adminFields').classList.add('hidden');
 
-            if (!emailRegex.test(email)) {
-                alert(`Please enter a valid email address ending with ${role === "Admin" ? "@rajagiritech.edu.in" : "@rajagiri.edu.in"}`);
-                return; // Stop the form submission if email is invalid
-            }
-
-            if (role === "Student") {
-                // Redirect to student sign-in page after registration
-                alert(`Welcome, ${fullName}! You are registered as a Student.`);
-                window.location.href = "SL.html";
-            } else if (role === "Alumni") {
-                // Redirect to alumni sign-in page after registration
-                alert(`Welcome, ${fullName}! You are registered as an Alumni.`);
-                window.location.href = "AL.html";
-            } else if (role === "Admin") {
-                // Redirect to admin page after registration
-                alert(`Welcome, ${fullName}! You are registered as an Admin.`);
-                window.location.href = "AdminPage.html";
-            } else {
-                alert("Please select a valid role.");
+            if (this.value === 'Student') {
+                document.getElementById('studentFields').classList.remove('hidden');
+            } else if (this.value === 'Alumni') {
+                document.getElementById('alumniFields').classList.remove('hidden');
+            } else if (this.value === 'Admin') {
+                document.getElementById('adminFields').classList.remove('hidden');
             }
         });
     </script>
