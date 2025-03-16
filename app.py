@@ -28,6 +28,30 @@ def admin_login():
 def register():
     """ Registration page """
     return render_template('register.html')
+@app.route('/mock_interview')
+def mock_interview():
+    """ mockinterview page """
+    return render_template('AMI.html')
+@app.route('/q_a')
+def q_a():
+    """ Q&A page """
+    return render_template('q_a.html')
+@app.route('/alumni_direc')
+def alumni_direc():
+    """ alumni_directory page """
+    return render_template('alumni_direc.html')
+@app.route('/apt_test')
+def apt_test():
+    """ aptitude_test page """
+    return render_template('AdminAT.html')
+@app.route('/code_challenge')
+def code_challenge():
+    """ coding_challenges page """
+    return render_template('AdminCC.html')
+@app.route('/stud_progress')
+def stud_progress():
+    """ student_progress page """
+    return render_template('AdminPD.html')
 
 if __name__ == '__main__':
     app.run(debug=True)
