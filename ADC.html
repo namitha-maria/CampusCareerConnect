@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard - Campus Career Connect</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <style>
         body {
             background-color: #000;
@@ -29,13 +30,19 @@
             background-color: #c7ea46;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             padding: 0 20px;
             z-index: 1000;
         }
 
-        .banner img {
-            height: 50px;
+        .banner .logo-container {
+            flex-grow: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .banner .logo {
+            height: 45px;
         }
 
         /* Logout Button */
@@ -43,12 +50,15 @@
             background: none;
             border: none;
             cursor: pointer;
-            position: absolute;
-            right: 20px;
         }
 
-        .logout-btn img {
-            height: 30px;
+        .logout-btn i {
+            font-size: 24px;
+            color: #000;
+        }
+
+        .logout-btn:hover i {
+            color: red;
         }
 
         /* Sidebar */
@@ -92,6 +102,7 @@
             top: 15px;
             left: 15px;
             z-index: 1001;
+            color: #000;
         }
 
         /* Content */
@@ -99,7 +110,7 @@
             text-align: center;
             padding: 20px;
             max-width: 800px;
-            margin-top: 20px;
+            margin-top: 80px;
         }
 
         .content h1 {
@@ -109,11 +120,18 @@
         }
 
         /* Dashboard Cards */
+        .dashboard-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+
         .dashboard-card {
             background-color: #222;
             border-radius: 10px;
             padding: 20px;
-            margin-bottom: 20px;
+            width: 250px;
             box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
             text-align: center;
             transition: transform 0.3s, box-shadow 0.3s;
@@ -124,22 +142,21 @@
             box-shadow: 0 6px 15px rgba(255, 255, 255, 0.3);
         }
 
+        .dashboard-card i {
+            font-size: 50px;
+            color: #c7ea46;
+            margin-bottom: 15px;
+        }
+
         .dashboard-card h3 {
             color: #c7ea46;
             margin-bottom: 10px;
+            font-size: 1.2rem;
         }
 
         .dashboard-card p {
             font-size: 1rem;
             color: #ddd;
-        }
-
-        .dashboard-card img {
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-            border-radius: 10px;
-            margin-bottom: 15px;
         }
 
         .dashboard-card a {
@@ -163,47 +180,50 @@
 <body>
     <!-- Banner -->
     <div class="banner">
-        <img src="8-removebg-preview.png" alt="Logo">
+        <button class="menu-btn" id="menuBtn">
+            <i class="fas fa-bars"></i>
+        </button>
+        <div class="logo-container">
+            <img src="8-removebg-preview.png" alt="Logo" class="logo">
+        </div>
         <button class="logout-btn" onclick="logout()">
-            <img src="9-removebg-preview.png" alt="Logout">
+            <i class="fas fa-sign-out-alt"></i>
         </button>
     </div>
 
     <!-- Sidebar Menu -->
-    <button class="menu-btn" id="menuBtn">&#9776;</button>
     <div class="sidebar" id="sidebar">
-        <a href="ADC.html">Dashboard</a>
-        <a href="AdminAT.html">Manage Aptitude Tests</a>
-        <a href="AdminCC.html">Manage Coding Challenges</a>
-        <a href="AdminPD.html">View Student Progress</a>
+        <a href="ADC.html"><i class="fas fa-home"></i> Dashboard</a>
+        <a href="AdminAT.html"><i class="fas fa-list-check"></i> Manage Aptitude</a>
+        <a href="AdminCC.html"><i class="fas fa-code"></i> Coding Challenges</a>
+        <a href="AdminPD.html"><i class="fas fa-user-graduate"></i> Student Progress</a>
     </div>
 
     <!-- Main Content -->
     <div class="content">
         <h1>Admin Dashboard</h1>
 
-        <div class="dashboard-card">
-            <img src="2.webp" alt="Aptitude Test">
-<a href="{{ url_for('apt_test') }}" class="role-icon">
-            <h3>Manage Aptitude Tests</h3>
-            <p>Add, update, or remove aptitude test questions for students.</p>
-            <a href="AdminAT.html">Go to Aptitude Tests</a>
-        </div>
+        <div class="dashboard-container">
+            <div class="dashboard-card">
+                <i class="fas fa-list-check"></i>
+                <h3>Manage Aptitude Tests</h3>
+                <p>Add, update, or remove aptitude test questions.</p>
+                <a href="AdminAT.html">Go to Aptitude Tests</a>
+            </div>
 
-        <div class="dashboard-card">
-            <img src="3.jpg" alt="Coding Challenges">
-<a href="{{ url_for('code_challenge') }}" class="role-icon">
-            <h3>Manage Coding Challenges</h3>
-            <p>Add or update coding challenges for students.</p>
-            <a href="AdminCC.html">Go to Coding Challenges</a>
-        </div>
+            <div class="dashboard-card">
+                <i class="fas fa-code"></i>
+                <h3>Manage Coding Challenges</h3>
+                <p>Add or update coding challenges.</p>
+                <a href="AdminCC.html">Go to Coding Challenges</a>
+            </div>
 
-        <div class="dashboard-card">
-            <img src="7.png" alt="Student Progress">
-<a href="{{ url_for('stud_progress') }}" class="role-icon">
-            <h3>View Student Progress</h3>
-            <p>Monitor the performance of students.</p>
-            <a href="AdminPD.html">View Progress</a>
+            <div class="dashboard-card">
+                <i class="fas fa-user-graduate"></i>
+                <h3>View Student Progress</h3>
+                <p>Monitor student performance.</p>
+                <a href="AdminPD.html">View Progress</a>
+            </div>
         </div>
     </div>
 
