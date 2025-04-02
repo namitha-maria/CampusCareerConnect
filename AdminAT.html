@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -49,6 +48,7 @@
             background-color: #333;
             padding: 10px;
             text-align: center;
+            margin-bottom: 20px;
         }
 
         .menu a {
@@ -63,15 +63,11 @@
         }
 
         .container {
-            max-width: 800px;
+            max-width: 1200px;
             margin: auto;
             background-color: #222;
             padding: 20px;
             border-radius: 10px;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
         }
 
         .btn-primary {
@@ -85,161 +81,320 @@
             background-color: #a8c63e;
         }
 
-        .question-list {
-            margin-top: 30px;
+        .btn-danger {
+            background-color: #dc3545;
         }
 
         .question-card {
             background-color: #333;
             padding: 15px;
             border-radius: 10px;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
 
         .correct-answer {
             color: #c7ea46;
             font-weight: bold;
         }
+
+        .form-control, .form-select {
+            background-color: #444;
+            color: #fff;
+            border: 1px solid #555;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #555;
+            color: #fff;
+            border-color: #c7ea46;
+            box-shadow: 0 0 0 0.25rem rgba(199, 234, 70, 0.25);
+        }
+
+        .input-group-text {
+            background-color: #555;
+            color: #fff;
+            border: 1px solid #555;
+        }
+
+        .alert-danger {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .alert-success {
+            background-color: #28a745;
+            color: white;
+        }
+
+        .badge {
+            font-size: 0.8rem;
+        }
     </style>
 </head>
-
 <body>
-
-    <!-- Banner -->
     <div class="banner">
-        <img src="D:/Project/CCC/images/8-removebg-preview.png" alt="Logo" class="logo">
-        <img src="D:/Project/CCC/images/9-removebg-preview.png" alt="Logout" class="logout-btn" onclick="logout()">
+        <img src="/static/images/logo.png" alt="Logo" class="logo">
+        <img src="/static/images/logout.png" alt="Logout" class="logout-btn" onclick="logout()">
         <h1>Admin Panel - Manage Questions</h1>
     </div>
 
-    <!-- Menu Bar -->
     <div class="menu">
-        <a href="ADC.html">Dashboard</a>
-        <a href="manage-questions.html">CodeCrack</a>
-        <a href="view-progress.html">Progress</a>
+        <a href="/admin-dashboard">Dashboard</a>
+        <a href="/admin-CC">CodeCrack</a>
+        <a href="/admin-ProgressDash">Progress</a>
     </div>
 
-    <!-- Question Management -->
     <div class="container">
-        <h2>Add a New Question</h2>
-        <form id="questionForm">
-            <div class="form-group">
-                <label for="question">Question:</label>
-                <input type="text" id="question" class="form-control" required>
-            </div>
-
-            <div class="form-group">
-                <label>Options:</label>
-                <div id="optionsContainer">
-                    <div class="input-group mb-2">
-                        <input type="text" class="form-control option-input" placeholder="Option 1" required>
-                        <div class="input-group-text">
-                            <input type="radio" name="correctAnswer" value="0" required>
-                        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card mb-4">
+                    <div class="card-header bg-primary text-black">
+                        <h2 class="h5 mb-0">Add New Question</h2>
                     </div>
-                    <div class="input-group mb-2">
-                        <input type="text" class="form-control option-input" placeholder="Option 2" required>
-                        <div class="input-group-text">
-                            <input type="radio" name="correctAnswer" value="1" required>
+                    <div class="card-body">
+                        <div id="formErrors" class="alert alert-danger d-none mb-3"></div>
+                        <form id="questionForm">
+                            <div class="mb-3">
+                                <label for="question" class="form-label">Question Text:</label>
+                                <textarea class="form-control" id="question" name="question" rows="3" required></textarea>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Options:</label>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text">A</span>
+                                    <input type="text" class="form-control" name="optionA" required>
+                                </div>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text">B</span>
+                                    <input type="text" class="form-control" name="optionB" required>
+                                </div>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text">C</span>
+                                    <input type="text" class="form-control" name="optionC" required>
+                                </div>
+                                <div class="input-group mb-2">
+                                    <span class="input-group-text">D</span>
+                                    <input type="text" class="form-control" name="optionD" required>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label class="form-label">Correct Option:</label>
+                                <select class="form-select" name="correctOption" required>
+                                    <option value="">Select correct option</option>
+                                    <option value="A">A</option>
+                                    <option value="B">B</option>
+                                    <option value="C">C</option>
+                                    <option value="D">D</option>
+                                </select>
+                            </div>
+                            
+                            <button type="submit" class="btn btn-primary w-100">Add Question</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header bg-primary text-black">
+                        <h2 class="h5 mb-0">Existing Questions</h2>
+                    </div>
+                    <div class="card-body">
+                        <div id="questionsList" class="list-group">
+                            <div class="text-center py-4">
+                                <div class="spinner-border text-primary" role="status">
+                                    <span class="visually-hidden">Loading...</span>
+                                </div>
+                                <p class="mt-2">Loading questions...</p>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <button type="button" class="btn btn-secondary btn-sm mt-2" onclick="addOption()">Add Option</button>
             </div>
-
-            <button type="submit" class="btn btn-primary">Add Question</button>
-        </form>
-
-        <!-- Question List -->
-        <div class="question-list">
-            <h2>Existing Questions</h2>
-            <div id="questionsContainer"></div>
         </div>
     </div>
 
-    <!-- Footer -->
     <footer style="text-align: center; padding: 20px; background-color: #000; color: #fff;">
         <p>&copy; 2025 Campus Career Connect. All Rights Reserved.</p>
     </footer>
 
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let questions = [];
+    document.addEventListener('DOMContentLoaded', function() {
+        fetchQuestions();
+        
+        document.getElementById('questionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const submitBtn = this.querySelector('button[type="submit"]');
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Adding...';
+            
+            document.getElementById('formErrors').classList.add('d-none');
+            
+            // Validate form
+            const question = document.getElementById('question').value.trim();
+            const options = [
+                document.getElementsByName('optionA')[0].value.trim(),
+                document.getElementsByName('optionB')[0].value.trim(),
+                document.getElementsByName('optionC')[0].value.trim(),
+                document.getElementsByName('optionD')[0].value.trim()
+            ];
+            const correctOption = document.getElementsByName('correctOption')[0].value;
 
-        document.getElementById("questionForm").addEventListener("submit", function(event) {
-            event.preventDefault();
+            let errors = [];
+            if (!question) errors.push('Question text is required');
+            options.forEach((opt, i) => {
+                if (!opt) errors.push(`Option ${String.fromCharCode(65 + i)} is required`);
+            });
+            if (!correctOption) errors.push('Correct option must be selected');
 
-            let questionText = document.getElementById("question").value;
-            let options = Array.from(document.getElementsByClassName("option-input")).map(input => input.value);
-            let correctIndex = document.querySelector("input[name='correctAnswer']:checked").value;
+            if (errors.length > 0) {
+                document.getElementById('formErrors').innerHTML = errors.join('<br>');
+                document.getElementById('formErrors').classList.remove('d-none');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Add Question';
+                return;
+            }
 
-            let newQuestion = {
-                text: questionText,
-                options: options,
-                correct: correctIndex
-            };
-
-            questions.push(newQuestion);
-            updateQuestionList();
-            this.reset();
+            // Submit form
+            const formData = new FormData(this);
+            fetch('/add_question', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) throw new Error('Server error');
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    this.reset();
+                    fetchQuestions();
+                    showAlert('Question added successfully!', 'success');
+                } else {
+                    throw new Error(data.error || 'Unknown error');
+                }
+            })
+            .catch(error => {
+                showAlert(`Failed to add question: ${error.message}`, 'danger');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Add Question';
+            });
         });
+    });
 
-        function addOption() {
-            let optionsContainer = document.getElementById("optionsContainer");
-            let optionCount = document.getElementsByClassName("option-input").length;
-
-            let optionDiv = document.createElement("div");
-            optionDiv.classList.add("input-group", "mb-2");
-
-            let optionInput = document.createElement("input");
-            optionInput.type = "text";
-            optionInput.classList.add("form-control", "option-input");
-            optionInput.placeholder = `Option ${optionCount + 1}`;
-            optionInput.required = true;
-
-            let radioDiv = document.createElement("div");
-            radioDiv.classList.add("input-group-text");
-
-            let radioInput = document.createElement("input");
-            radioInput.type = "radio";
-            radioInput.name = "correctAnswer";
-            radioInput.value = optionCount;
-            radioInput.required = true;
-
-            radioDiv.appendChild(radioInput);
-            optionDiv.appendChild(optionInput);
-            optionDiv.appendChild(radioDiv);
-            optionsContainer.appendChild(optionDiv);
-        }
-
-        function updateQuestionList() {
-            let container = document.getElementById("questionsContainer");
-            container.innerHTML = "";
-
-            questions.forEach((q, index) => {
-                let questionCard = document.createElement("div");
-                questionCard.classList.add("question-card");
-
-                let questionText = document.createElement("p");
-                questionText.textContent = `${index + 1}. ${q.text}`;
-
-                let optionsList = document.createElement("ul");
-                q.options.forEach((option, i) => {
-                    let listItem = document.createElement("li");
-                    listItem.textContent = option;
-                    optionsList.appendChild(listItem);
+    function fetchQuestions() {
+        const questionsList = document.getElementById('questionsList');
+        questionsList.innerHTML = '<div class="text-center py-4"><div class="spinner-border text-primary"></div><p class="mt-2">Loading questions...</p></div>';
+        
+        fetch('/get_questions')
+            .then(response => {
+                if (!response.ok) throw new Error('Network error');
+                return response.json();
+            })
+            .then(data => {
+                if (data.length === 0) {
+                    questionsList.innerHTML = '<div class="text-center py-4 text-muted">No questions found</div>';
+                    return;
+                }
+                
+                questionsList.innerHTML = '';
+                data.forEach(question => {
+                    const questionElement = document.createElement('div');
+                    questionElement.className = 'question-card mb-3';
+                    
+                    let optionsHtml = '';
+                    for (const [key, value] of Object.entries(question.options)) {
+                        optionsHtml += `<div class="ps-2">${key}: ${value} ${key === question.corr_opt ? '<span class="badge bg-success ms-2">Correct</span>' : ''}</div>`;
+                    }
+                    
+                    questionElement.innerHTML = `
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div class="flex-grow-1">
+                                <h5 class="mb-2">Q${question.qn_id}: ${question.qn_text}</h5>
+                                <div class="options mb-2">${optionsHtml}</div>
+                                <small class="text-muted">Added: ${new Date(question.test_date).toLocaleString()}</small>
+                            </div>
+                            <div class="ms-3">
+                                <button class="btn btn-danger btn-sm delete-btn" data-qn-id="${question.qn_id}">
+                                    Delete
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                    
+                    questionsList.appendChild(questionElement);
                 });
 
-                questionCard.appendChild(questionText);
-                questionCard.appendChild(optionsList);
-                container.appendChild(questionCard);
+                document.querySelectorAll('.delete-btn').forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const qnId = this.getAttribute('data-qn-id');
+                        if (confirm('Are you sure you want to delete this question?')) {
+                            deleteQuestion(qnId);
+                        }
+                    });
+                });
+            })
+            .catch(error => {
+                questionsList.innerHTML = `<div class="alert alert-danger">Error loading questions: ${error.message}</div>`;
             });
-        }
+    }
 
-        function logout() {
-            alert('You have logged out!');
-            window.location.href = 'index.html';
-        }
+    function deleteQuestion(qnId) {
+        const btn = document.querySelector(`.delete-btn[data-qn-id="${qnId}"]`);
+        const originalText = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+        
+        fetch('/delete_question', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `qn_id=${qnId}`
+        })
+        .then(response => {
+            if (!response.ok) throw new Error('Server error');
+            return response.json();
+        })
+        .then(data => {
+            if (data.success) {
+                showAlert('Question deleted successfully!', 'success');
+                fetchQuestions();
+            } else {
+                throw new Error(data.error || 'Unknown error');
+            }
+        })
+        .catch(error => {
+            showAlert(`Failed to delete question: ${error.message}`, 'danger');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+        });
+    }
+
+    function showAlert(message, type) {
+        const alertDiv = document.createElement('div');
+        alertDiv.className = `alert alert-${type} alert-dismissible fade show position-fixed top-0 end-0 m-3`;
+        alertDiv.style.zIndex = '1000';
+        alertDiv.innerHTML = `
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        `;
+        
+        document.body.appendChild(alertDiv);
+        
+        setTimeout(() => {
+            alertDiv.remove();
+        }, 5000);
+    }
+
+    function logout() {
+        window.location.href = '/logout';
+    }
     </script>
-
 </body>
 </html>

@@ -203,14 +203,13 @@
 
     <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar">
-        <a href="{{ url_for('home2') }}">Home</a>
-        <a href="{{ url_for('student_MI') }}">Mock Interviews</a>
-        <a href="{{ url_for('student_at') }}">AptiTest</a>
-        <a href="{{ url_for('student_cc') }}">Coding Challenges</a>
-        <a href="{{ url_for('student_pd') }}">Progress Dashboard</a>
-        <a href="{{ url_for('student_ai') }}">Alumni Interaction</a>
-        <a href="{{ url_for('about') }}">About Us</a>
+	    <a href="{{ url_for('home3') }}">Home</a>
+        <a href="{{ url_for('alumni_MI') }}">Mock Interview</a>
+        <a href="{{ url_for('alumni_qna') }}">Q&A</a>
+        <a href="{{ url_for('alumni_ad') }}">Alumni Directory</a>
+        <a href="{{ url_for('alumni_about') }}">About Us</a>
     </div>
+
 
     <!-- Main Content -->
     <div class="content">
@@ -250,8 +249,11 @@
         });
 
         function logout() {
-            alert('You have logged out!');
-            window.location.href = "{{ url_for('home') }}";
+            fetch("{{ url_for('alumni_login') }}", { method: "GET" })
+                .then(() => {
+                    alert('You have logged out!');
+                    window.location.href = "{{ url_for('home') }}";
+                });
         }
     </script>
     

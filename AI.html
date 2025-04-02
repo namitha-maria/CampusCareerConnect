@@ -10,15 +10,10 @@
     <style>
         body {
             background-color: #000;
-            margin: 0;
-            font-family: 'Arial', sans-serif;
             color: #fff;
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
+            font-family: 'Arial', sans-serif;
         }
 
-        /* Banner */
         .banner {
             position: fixed;
             top: 0;
@@ -36,38 +31,19 @@
 
         .banner img {
             height: 90px;
-        }
-
-        /* Logo Button on the Right */
-        .logo.right {
-            position: absolute;
-            top: 10px;
-            right: 15px;
-            width: 40px;
-            height: 40px;
-            border: none;
-            background-color: transparent;
-            padding: 0;
             cursor: pointer;
         }
 
-        .logo.right i {
-            font-size: 1.8rem;
-            color: #000;
-        }
-
-        /* Sidebar Menu */
         .sidebar {
             position: fixed;
             top: 60px;
-            left: -200px;
-            width: 200px;
+            left: -250px;
+            width: 250px;
             height: calc(100% - 60px);
             background-color: #c7ea46;
-            overflow: hidden;
             box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
             transition: left 0.3s ease;
-            z-index: 1000;
+            z-index: 1100;
         }
 
         .sidebar.active {
@@ -88,12 +64,11 @@
             color: #c7ea46;
         }
 
-        /* Menu Button */
         .menu-btn {
             position: fixed;
             top: 10px;
             left: 10px;
-            z-index: 1100;
+            z-index: 1200;
             background-color: #c7ea46;
             border: none;
             border-radius: 5px;
@@ -104,6 +79,16 @@
             color: #000;
         }
 
+        .logo.right {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background-color: transparent;
+            padding: 0;
+            border: none; /* Remove border */
+            outline: none; /* Remove focus outline */
+            cursor: pointer;
+        }
         .content {
             flex: 1;
             padding: 20px;
@@ -153,9 +138,9 @@
         footer {
             background-color: #000;
             color: #fff;
-            padding: 20px;
             text-align: center;
-            margin-top: auto;
+            padding: 20px;
+            margin-top: 40px;
         }
 
         footer a {
@@ -205,10 +190,10 @@
 <body>
     <!-- Banner -->
     <div class="banner">
-        <img src="8-removebg-preview.png" alt="Logo">
+        <img src="{{ url_for('static', filename='images/8-removebg-preview.png') }}" alt="Logo">
         <!-- Logo on the right wrapped in a button -->
         <button class="logo right" onclick="logout()">
-            <i class="bi bi-box-arrow-right"></i> <!-- Bootstrap icon for logout -->
+            <i class="bi bi-box-arrow-right" style="font-size: 1.5rem; color: #000;"></i> <!-- Bootstrap icon for logout -->
         </button>
     </div>
 
@@ -217,13 +202,13 @@
 
     <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar">
-        <a href="Home2.html">Home</a>
-        <a href="MI.html">Mock Interviews</a>
-        <a href="AT.html">AptiTest</a>
-        <a href="CC.html">Coding Challenges</a>
-        <a href="PD.html">Progress Dashboard</a>
-        <a href="AI.html">Alumni Interaction</a>
-        <a href="about.html">About Us</a>
+        <a href="{{ url_for('home2') }}">Home</a>
+        <a href="{{ url_for('student_MI') }}">Mock Interviews</a>
+        <a href="{{ url_for('student_at') }}">AptiTest</a>
+        <a href="{{ url_for('student_cc') }}">Coding Challenges</a>
+        <a href="{{ url_for('student_pd') }}">Progress Dashboard</a>
+        <a href="{{ url_for('student_ai') }}">Alumni Interaction</a>
+        <a href="{{ url_for('about') }}">About Us</a>
     </div>
 
     <!-- Main Content -->
@@ -232,11 +217,11 @@
         <p>Connect with alumni to gain insights, guidance, and networking opportunities.</p>
 
         <div class="buttons">
-            <button class="icon-button" onclick="window.location.href='Q&A.html'">
+            <button class="icon-button" onclick="window.location.href='{{ url_for('student_qna') }}'">
                 <i class="bi bi-chat-left-dots"></i> <!-- Bootstrap icon for Q&A -->
                 <span>Q&A</span>
             </button>
-            <button class="icon-button" onclick="window.location.href='AD.html'">
+            <button class="icon-button" onclick="window.location.href='{{ url_for('student_ad') }}'">
                 <i class="bi bi-person-lines-fill"></i> <!-- Bootstrap icon for Alumni Directory -->
                 <span>Alumni Directory</span>
             </button>
@@ -259,7 +244,7 @@
 
         function logout() {
             alert('You have logged out!');
-            window.location.href = 'Home.html'; // Redirect to the login page
+            window.location.href = "{{ url_for('home') }}"; // Redirect to the login page
         }
     </script>
 </body>

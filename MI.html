@@ -195,7 +195,7 @@
 <body>
     <!-- Banner -->
     <div class="banner">
-        <img src="8-removebg-preview.png" alt="Logo">
+        <img src="{{ url_for('static', filename='images/8-removebg-preview.png') }}" alt="Logo">
         <button class="logo right" onclick="logout()">
             <i class="bi bi-box-arrow-right" style="font-size: 1.5rem; color: #000;"></i>
         </button>
@@ -206,13 +206,13 @@
 
     <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar">
-        <a href="Home2.html">Home</a>
-        <a href="MI.html">Mock Interviews</a>
-        <a href="AT.html">AptiTest</a>
-        <a href="CC.html">Coding Challenges</a>
-        <a href="PD.html">Progress Dashboard</a>
-        <a href="AI.html">Alumni Interaction</a>
-        <a href="about.html">About Us</a>
+        <a href="{{ url_for('home2') }}">Home</a>
+        <a href="{{ url_for('student_MI') }}">Mock Interviews</a>
+        <a href="{{ url_for('student_at') }}">AptiTest</a>
+        <a href="{{ url_for('student_cc') }}">Coding Challenges</a>
+        <a href="{{ url_for('student_pd') }}">Progress Dashboard</a>
+        <a href="{{ url_for('student_ai') }}">Alumni Interaction</a>
+        <a href="{{ url_for('about') }}">About Us</a>
     </div>
 
     <!-- Main Content -->
@@ -258,7 +258,7 @@
     <script>
         function logout() {
             alert('You have logged out!');
-            window.location.href = 'Home.html'; // Change to your actual logout handler
+            window.location.href = "{{ url_for('home') }}"; // Change to your actual logout handler
         }
 
         const menuBtn = document.getElementById('menuBtn');

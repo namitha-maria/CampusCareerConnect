@@ -7,7 +7,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <style>
         body {
-            background: url('6.jpg') no-repeat center center fixed; 
+            background: url("{{ url_for('static', filename='images/6.jpg') }}") no-repeat center center fixed;
             background-size: cover;
             margin: 0;
             font-family: 'Arial', sans-serif;
@@ -82,10 +82,20 @@
     <div class="overlay"></div>
     <div class="register-card">
         <h3 class="text-center mb-4">New User Registration</h3>
-        <form id="registrationForm">
+
+        <!-- Flash messages for registration errors -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% endwith %}
+
+        <form id="registrationForm" action="{{ url_for('register') }}" method="POST">
             <div class="mb-3">
                 <label for="role" class="form-label">Role</label>
-                <select class="form-select" id="role" required>
+                <select class="form-select" name="role" id="role" required>
                     <option value="" disabled selected>Select your role</option>
                     <option value="Student">Student</option>
                     <option value="Alumni">Alumni</option>
@@ -95,22 +105,24 @@
 
             <div class="mb-3">
                 <label for="fullName" class="form-label">Full Name</label>
-                <input type="text" class="form-control" id="fullName" placeholder="Enter your full name" required>
-            </div>
-            <div class="mb-3">
-                <label for="email" class="form-label">Email Address</label>
-                <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
-            </div>
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" class="form-control" id="password" placeholder="Create a password" required>
+                <input type="text" class="form-control" name="name" id="fullName" placeholder="Enter your full name" required>
             </div>
 
-            <!-- Additional Fields (Moved Below Existing Ones) -->
+            <div class="mb-3">
+                <label for="email" class="form-label">Email Address</label>
+                <input type="email" class="form-control" name="email" id="email" placeholder="Enter your email" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" name="password" id="password" placeholder="Create a password" required>
+            </div>
+
+            <!-- Student Fields -->
             <div id="studentFields" class="hidden">
                 <div class="mb-3">
                     <label for="batchYear" class="form-label">Batch Year</label>
-                    <select class="form-select" id="batchYear">
+                    <select class="form-select" name="batch_year" id="batchYear">
                         <option value="" disabled selected>Select batch year</option>
                         <script>
                             for (let year = 2020; year <= new Date().getFullYear() + 4; year++) {
@@ -121,10 +133,11 @@
                 </div>
             </div>
 
+            <!-- Alumni Fields -->
             <div id="alumniFields" class="hidden">
                 <div class="mb-3">
                     <label for="gradYear" class="form-label">Graduation Year</label>
-                    <select class="form-select" id="gradYear">
+                    <select class="form-select" name="grad_year" id="gradYear">
                         <option value="" disabled selected>Select graduation year</option>
                         <script>
                             for (let year = 2000; year <= new Date().getFullYear(); year++) {
@@ -135,29 +148,27 @@
                 </div>
                 <div class="mb-3">
                     <label for="company" class="form-label">Company</label>
-                    <input type="text" class="form-control" id="company" placeholder="Enter your company">
+                    <input type="text" class="form-control" name="company" id="company" placeholder="Enter your company">
                 </div>
                 <div class="mb-3">
                     <label for="jobDesc" class="form-label">Job Description</label>
-                    <input type="text" class="form-control" id="jobDesc" placeholder="Enter your job role">
-                </div>
-                <div class="mb-3">
-                    <label for="bio" class="form-label">Short Bio</label>
-                    <textarea class="form-control" id="bio" rows="2" placeholder="Tell us about yourself"></textarea>
+                    <input type="text" class="form-control" name="designation" id="jobDesc" placeholder="Enter your job role">
                 </div>
             </div>
 
+            <!-- Admin Fields -->
             <div id="adminFields" class="hidden">
                 <div class="mb-3">
                     <label for="position" class="form-label">Position</label>
-                    <input type="text" class="form-control" id="position" placeholder="Enter your position">
+                    <input type="text" class="form-control" name="position" id="position" placeholder="Enter your position">
                 </div>
             </div>
 
             <button type="submit" class="btn btn-custom">Register</button>
         </form>
+
         <p class="text-center mt-3">
-            Already have an account? <a href="index.html" class="back-link">Sign In</a>
+            Already have an account? <a href="{{ url_for('home') }}" class="back-link">Sign In</a>
         </p>
     </div>
 
@@ -175,6 +186,31 @@
                 document.getElementById('adminFields').classList.remove('hidden');
             }
         });
+
+        document.getElementById('registrationForm').addEventListener('submit', function (event) {
+            const role = document.getElementById('role').value;
+            const name = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            const studentAlumniRegex = /^[a-zA-Z0-9._%+-]+@rajagiri\.edu\.in$/;
+            const adminRegex = /^[a-zA-Z0-9._%+-]+@rajagiritech\.edu\.in$/;
+
+            if (!name || !email || !password || !role) {
+                alert("All fields are required.");
+                event.preventDefault();
+                return;
+            }
+
+            if ((role === "Student" || role === "Alumni") && !studentAlumniRegex.test(email)) {
+                alert("Students and Alumni must use an email ending with @rajagiri.edu.in");
+                event.preventDefault();
+            } else if (role === "Admin" && !adminRegex.test(email)) {
+                alert("Admins must use an email ending with @rajagiritech.edu.in");
+                event.preventDefault();
+            }
+        });
     </script>
+
 </body>
 </html>

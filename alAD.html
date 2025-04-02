@@ -139,12 +139,6 @@
             font-size: 1rem;
         }
 
-        .loading {
-            color: #c7ea46;
-            font-size: 1.2rem;
-            margin: 20px;
-        }
-
         footer {
             background-color: #000;
             color: #fff;
@@ -168,19 +162,18 @@
 </head>
 
 <body>
+    <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar">
-        <a href="/studenthome">Home</a>
-        <a href="/student-MI">Mock Interviews</a>
-        <a href="/student-at">AptiTest</a>
-        <a href="/student-cc">Coding Challenges</a>
-        <a href="/student-pd">Progress Dashboard</a>
-        <a href="/student-ai">Alumni Interaction</a>
-        <a href="/about">About Us</a>
+	    <a href="{{ url_for('home3') }}">Home</a>
+        <a href="{{ url_for('alumni_MI') }}">Mock Interview</a>
+        <a href="{{ url_for('alumni_qna') }}">Q&A</a>
+        <a href="{{ url_for('alumni_ad') }}">Alumni Directory</a>
+        <a href="{{ url_for('alumni_about') }}">About Us</a>
     </div>
 
     <div class="banner">
         <button class="menu-btn" id="menuBtn">☰</button>
-        <img src="/static/images/8-removebg-preview.png" alt="Campus Career Connect Logo">
+        <img src="{{ url_for('static', filename='images/8-removebg-preview.png') }}" alt="Campus Career Connect Logo">
         <button class="logo right" onclick="logout()">
             <i class="bi bi-box-arrow-right" style="font-size: 1.5rem; color: #000;"></i>
         </button>
@@ -188,8 +181,25 @@
 
     <div class="content">
         <h1>Alumni Directory</h1>
-        <div class="alumni-list" id="alumniList">
-            <div class="loading">Loading alumni data...</div>
+        <div class="alumni-list">
+            <div class="alumni-card">
+                <h3>John Doe</h3>
+                <p>Graduated: 2020</p>
+                <p>Company: Tech Corp</p>
+                <p>Email: johndoe@techcorp.com</p>
+            </div>
+            <div class="alumni-card">
+                <h3>Jane Smith</h3>
+                <p>Graduated: 2019</p>
+                <p>Company: Innovate Inc.</p>
+                <p>Email: janesmith@innovate.com</p>
+            </div>
+            <div class="alumni-card">
+                <h3>Michael Johnson</h3>
+                <p>Graduated: 2018</p>
+                <p>Company: SoftWorks</p>
+                <p>Email: michael@softworks.com</p>
+            </div>
         </div>
     </div>
 
@@ -206,53 +216,13 @@
         });
 
         function logout() {
-            alert('You have logged out!');
-            window.location.href = "/home";
+            fetch("{{ url_for('alumni_login') }}", { method: "GET" })
+                .then(() => {
+                    alert('You have logged out!');
+                    window.location.href = "{{ url_for('home') }}";
+                });
         }
-        async function fetchAlumniData() {
-    const alumniList = document.getElementById('alumniList');
-    alumniList.innerHTML = '<div class="loading">Loading alumni data...</div>';
-
-    try {
-        const response = await fetch('/get_alumni');
-        const result = await response.json();
-
-        if (!result.success) {
-            throw new Error(result.error || 'Failed to fetch alumni data');
-        }
-
-        alumniList.innerHTML = '';
-
-        if (result.data.length === 0) {
-            alumniList.innerHTML = '<div class="alumni-card">No alumni records found</div>';
-            return;
-        }
-
-        result.data.forEach(alumni => {
-            const card = document.createElement('div');
-            card.className = 'alumni-card';
-            card.innerHTML = `
-                <h3>${alumni.name || 'Alumni Member'}</h3>
-                <p>Graduated: ${alumni.grad_year || 'N/A'}</p>
-                <p>Company: ${alumni.company || 'Not specified'}</p>
-                <p>Position: ${alumni.designation || 'Not specified'}</p>
-                ${alumni.bio ? `<p class="bio">${alumni.bio}</p>` : ''}
-            `;
-            
-            alumniList.appendChild(card);
-        });
-
-    } catch (error) {
-        console.error('Error loading alumni data:', error);
-        alumniList.innerHTML = `
-            <div class="alumni-card error">
-                Error: ${error.message}
-            </div>
-        `;
-    }
-}
-        // Fetch alumni data when page loads
-        document.addEventListener('DOMContentLoaded', fetchAlumniData);
     </script>
 </body>
+
 </html>

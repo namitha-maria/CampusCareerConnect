@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Q&A - Campus Career Connect</title>
+    <title>Q&A Forum</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
@@ -111,12 +111,6 @@
             margin-bottom: 20px;
         }
 
-        .content h2 {
-            color: #c7ea46;
-            margin-bottom: 20px;
-            margin-top: 30px;
-        }
-
         .qa-box {
             max-width: 700px;
             margin: 30px auto;
@@ -125,11 +119,19 @@
             border-radius: 10px;
         }
 
+        .qa-item {
+            background-color: #222;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            text-align: left;
+        }
+
         .qa-form {
             display: flex;
             flex-direction: column;
             gap: 10px;
-            margin-bottom: 30px;
+            margin-top: 20px;
         }
 
         .qa-form textarea {
@@ -157,20 +159,6 @@
             color: #fff;
         }
 
-        .qa-item {
-            background-color: #222;
-            padding: 15px;
-            margin-bottom: 20px;
-            border-radius: 10px;
-            text-align: left;
-        }
-
-        .qa-answer {
-            margin-top: 15px;
-            border-top: 1px solid #444;
-            padding-top: 15px;
-        }
-
         footer {
             background-color: #000;
             color: #fff;
@@ -189,7 +177,6 @@
         }
     </style>
 </head>
-
 <body>
     <!-- Banner -->
     <div class="banner">
@@ -202,41 +189,35 @@
 
     <!-- Sidebar Menu -->
     <div class="sidebar" id="sidebar">
-        <a href="{{ url_for('home2') }}">Home</a>
-        <a href="{{ url_for('student_MI') }}">Mock Interviews</a>
-        <a href="{{ url_for('student_at') }}">AptiTest</a>
-        <a href="{{ url_for('student_cc') }}">Coding Challenges</a>
-        <a href="{{ url_for('student_pd') }}">Progress Dashboard</a>
-        <a href="{{ url_for('student_ai') }}">Alumni Interaction</a>
-        <a href="{{ url_for('about') }}">About Us</a>
+        <a href="{{ url_for('home3') }}">Home</a>
+        <a href="{{ url_for('alumni_MI') }}">Mock Interview</a>
+        <a href="{{ url_for('alumni_qna') }}">Q&A</a>
+        <a href="{{ url_for('alumni_ad') }}">Alumni Directory</a>
+        <a href="{{ url_for('alumni_about') }}">About Us</a>
     </div>
 
     <!-- Main Content -->
     <div class="content">
-        <h2>Ask a Question</h2>
+        <h2>Answer Questions</h2>
+
         <div class="qa-box">
-            <form class="qa-form" action="{{ url_for('ask_question') }}" method="post">
-                <textarea name="question" placeholder="Type your question here..." required></textarea>
-                <button type="submit">Ask Question</button>
-            </form>
-            
-            <h2>Questions & Answers</h2>
             {% for qa in qna %}
                 <div class="qa-item">
                     <p><strong>{{ qa.student_name }}</strong> asked:</p>
                     <p>{{ qa.question_text }}</p>
                     <p><small>Posted on {{ qa.created_at }}</small></p>
-            
+
                     {% if qa.answer_text %}
-                        <div class="qa-answer">
+                        <div style="margin-top: 15px; border-top: 1px solid #444; padding-top: 15px;">
                             <p><strong>{{ qa.alumni_name }}</strong> answered:</p>
                             <p>{{ qa.answer_text }}</p>
                             <p><small>Answered on {{ qa.answer_date }}</small></p>
                         </div>
                     {% else %}
-                        <div class="qa-answer">
-                            <p><em>Waiting for an answer from alumni...</em></p>
-                        </div>
+                        <form class="qa-form" action="{{ url_for('answer_question', question_id=qa.id) }}" method="post">
+                            <textarea name="answer" placeholder="Type your answer..." required></textarea>
+                            <button type="submit">Submit Answer</button>
+                        </form>
                     {% endif %}
                 </div>
             {% endfor %}
@@ -245,10 +226,10 @@
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Campus Career Connect. All Rights Reserved.</p>
-        <p>Contact us: <a href="mailto:info@campuscareerconnect.com">info@campuscareerconnect.com</a></p>
+        <p>&copy; 2023 Campus Career Connect. All rights reserved.</p>
     </footer>
 
+    <!-- JavaScript -->
     <script>
         // Toggle sidebar
         document.getElementById('menuBtn').addEventListener('click', function() {
