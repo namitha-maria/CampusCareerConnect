@@ -1,5 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session,jsonify
 from flask_bcrypt import Bcrypt
+from flask_wtf import FlaskForm
+from wtforms import StringField, SelectField, IntegerField, TextAreaField, validators
 import mysql.connector
 import json
 import datetime
@@ -128,10 +130,11 @@ def process_judge0_result(result):
     }
 
 app = Flask(__name__)
+
 bcrypt = Bcrypt(app)
 
 # Secret key for session management
-app.secret_key = 'your_secret_key'  # Change this to a secure key
+app.secret_key = '123456'  # Change this to a secure key
 
 # Function to get a database connection
 def get_db_connection():
@@ -156,6 +159,7 @@ def home():
 
 @app.route('/student-login', methods=['GET', 'POST'])
 def student_login():
+    
     if request.method == 'POST':
         email = request.form['studentEmail']
         password = request.form['studentPassword']
@@ -174,6 +178,7 @@ def student_login():
                 session['id'] = user['UserID']
                 session['email'] = user['Email']
                 session['role'] = user['Role']
+               
 
                 flash("Login successful!", "success")
                 return redirect(url_for('home2'))  # Redirect to home after login
@@ -185,9 +190,7 @@ def student_login():
 
     return render_template('SL.html')  # Return login page on GET request or failed login
 
-@app.route('/student-MI')
-def student_MI():
-    return render_template('MI.html')
+
 
 #temporary
 @app.route('/debug-questions')
@@ -204,9 +207,32 @@ def debug_questions():
 
 @app.route('/student-at')
 def student_at():
-     # or however you fetch questions
-      # Debug: Check structure in terminal
-    return render_template('AT.html')
+    if 'loggedin' not in session or session.get('role') != 'Student':
+        flash("Please login as student first", "danger")
+        return redirect(url_for('student_login'))
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        
+        # Get 10 random questions with formatted dates
+        cursor.execute("""
+            SELECT qn_id, qn_text, options, corr_opt,
+                   DATE_FORMAT(test_date, '%Y-%m-%d') AS test_date 
+            FROM aptitude_test 
+            ORDER BY RAND() LIMIT 10
+        """)
+        questions = cursor.fetchall()
+        
+        # Convert options JSON to dict
+        for q in questions:
+            q['options'] = json.loads(q['options'])
+        
+        return render_template('AT.html', questions=questions)
+    
+    finally:
+        cursor.close()
+        conn.close()
 
 @app.route('/student-cc')
 def student_cc():
@@ -214,7 +240,146 @@ def student_cc():
 
 @app.route('/student-pd')
 def student_pd():
-    return render_template('PD.html')
+    return render_template('progdash.html')
+
+@app.route('/api/student/progress')
+def get_student_progress():
+    if 'id' not in session:
+        return jsonify({"error": "Not logged in"}), 401
+    
+    user_id = session['id']
+    
+    try:
+        conn = get_db_connection()
+        if not conn:
+            return jsonify({"error": "Database connection failed"}), 500
+            
+        cursor = conn.cursor(dictionary=True)
+        
+        # Initialize response
+        response = {
+            "aptitude": {"latestScore": 0, "history": [], "dates": []},
+            "mockInterview": {"latestScore": 0, "history": [], "dates": []},
+            "codingChallenge": {"latestScore": 0, "history": [], "dates": []}
+        }
+        
+        # Fixed Aptitude Query
+        try:
+            cursor.execute("""
+                SELECT 
+                    DATE(response_date) as test_date,
+                    AVG(score*100) as avg_score
+                FROM responses
+                WHERE UserID = %s
+                GROUP BY test_date
+                ORDER BY test_date ASC
+            """, (user_id,))
+            
+            aptitude_results = cursor.fetchall()
+            if aptitude_results:
+                response["aptitude"]["history"] = [
+                    float(result['avg_score']) if result['avg_score'] is not None else 0 
+                    for result in aptitude_results
+                ]
+                response["aptitude"]["dates"] = [
+                    result['test_date'].strftime('%Y-%m-%d') 
+                    if hasattr(result['test_date'], 'strftime')
+                    else str(result['test_date']) 
+                    for result in aptitude_results
+                ]
+                
+                cursor.execute("SELECT AVG(score*100) as latest_score FROM responses WHERE UserID = %s", (user_id,))
+                latest_aptitude = cursor.fetchone()
+                if latest_aptitude and latest_aptitude['latest_score'] is not None:
+                    response["aptitude"]["latestScore"] = round(float(latest_aptitude['latest_score']), 1)
+        except Exception as e:
+            print(f"Aptitude query error: {e}")
+            # Keep default values if error occurs
+        
+        # Get mock interview ratings with null checks
+        try:
+            cursor.execute("""
+                SELECT rating, DATE(interview_date) as interview_date
+                FROM mock_interviews
+                WHERE user_id = %s AND rating IS NOT NULL
+                ORDER BY interview_date ASC
+            """, (user_id,))
+            
+            interview_results = cursor.fetchall()
+            if interview_results:
+                response["mockInterview"]["history"] = [float(result['rating']) * 20 if result['rating'] is not None else 0
+                                                      for result in interview_results]
+                response["mockInterview"]["dates"] = [result['interview_date'].strftime('%Y-%m-%d') if hasattr(result['interview_date'], 'strftime')
+                                                    else str(result['interview_date'])
+                                                    for result in interview_results]
+                
+                cursor.execute("""
+                    SELECT AVG(rating) as latest_score
+                    FROM mock_interviews
+                    WHERE user_id = %s AND rating IS NOT NULL
+                """, (user_id,))
+                latest_interview = cursor.fetchone()
+                if latest_interview and latest_interview['latest_score'] is not None:
+                    response["mockInterview"]["latestScore"] = round(float(latest_interview['latest_score']) * 20, 1)
+        except Exception as e:
+            print(f"Mock interview query error: {e}")
+            # Keep default values if error occurs
+        
+        # Get coding challenge success rate with null checks
+        try:
+            cursor.execute("""
+                SELECT 
+                    DATE(submission_time) as submission_date,
+                    (SUM(CASE WHEN status = 'Accepted' THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0)) * 100 as success_rate
+                FROM coding_submissions
+                WHERE user_id = %s
+                GROUP BY DATE(submission_time)
+                ORDER BY submission_date ASC
+            """, (user_id,))
+            
+            coding_results = cursor.fetchall()
+            if coding_results:
+                response["codingChallenge"]["history"] = [float(result['success_rate']) if result['success_rate'] is not None else 0
+                                                        for result in coding_results]
+                response["codingChallenge"]["dates"] = [result['submission_date'].strftime('%Y-%m-%d') if hasattr(result['submission_date'], 'strftime')
+                                                      else str(result['submission_date'])
+                                                      for result in coding_results]
+                
+                cursor.execute("""
+                    SELECT 
+                        (SUM(CASE WHEN status = 'Accepted' THEN 1 ELSE 0 END) / NULLIF(COUNT(*), 0)) * 100 as overall_success_rate
+                    FROM coding_submissions
+                    WHERE user_id = %s
+                """, (user_id,))
+                coding_overall = cursor.fetchone()
+                if coding_overall and coding_overall['overall_success_rate'] is not None:
+                    response["codingChallenge"]["latestScore"] = round(float(coding_overall['overall_success_rate']), 1)
+        except Exception as e:
+            print(f"Coding challenge query error: {e}")
+            # Keep default values if error occurs
+        
+        # Check if any data was found
+        data_found = (
+            response["aptitude"]["latestScore"] is not None or 
+            response["mockInterview"]["latestScore"] is not None or
+            response["codingChallenge"]["latestScore"] is not None
+        )
+        
+        if not data_found:
+            print("No data found for user ID:", user_id)
+        
+        cursor.close()
+        conn.close()
+        
+        return jsonify(response)
+        
+    except Exception as e:
+        print(f"Database error: {e}")
+        return jsonify({
+            "error": "Failed to fetch progress data",
+            "details": str(e)
+        }), 500
+
 
 @app.route('/student-ai')
 def student_ai():
@@ -394,12 +559,6 @@ def home3():
         return redirect(url_for('alumni_login'))  # Redirect to login if not logged in
 
 
-@app.route('/alumni-MI')
-def alumni_MI():
-    return render_template('AMI.html')
-
-# Changes needed for app.py:
-
 @app.route('/alumni-qna')
 def alumni_qna():
     # This route needs to fetch the Q&A data just like the student_qna route
@@ -422,10 +581,105 @@ def alumni_qna():
 
     return render_template('alqna.html', qna=qna_data)  # Pass the data to the template
 
+from flask import request, jsonify
 
-@app.route('/alumni-ad')
-def alumni_ad():
-    return render_template('alAD.html')
+@app.route('/admin/qna')
+def admin_qna():
+    if 'loggedin' not in session or session.get('role') != 'Admin':
+        flash("Unauthorized access", "danger")
+        return redirect(url_for('login'))
+    return render_template('AdminQNA.html')
+
+@app.route('/admin/get_qnas')
+def admin_get_qnas():
+    if 'loggedin' not in session or session.get('role') != 'Admin':
+        return jsonify({'error': 'Unauthorized'}), 401
+
+    try:
+        search_query = request.args.get('search', '').strip()
+        status_filter = request.args.get('status', 'all')
+        sort_order = request.args.get('sort', 'newest')
+
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+
+        query = """
+            SELECT q.id, q.question_text, q.created_at, 
+                   u.Name as student_name, 
+                   a.answer_text, a.created_at as answer_date,
+                   ua.Name as alumni_name
+            FROM questions q
+            JOIN Users u ON q.user_id = u.UserID
+            LEFT JOIN answers a ON q.id = a.question_id
+            LEFT JOIN Users ua ON a.user_id = ua.UserID
+            WHERE 1=1
+        """
+
+        params = []
+        if search_query:
+            query += " AND q.question_text LIKE %s"
+            params.append(f"%{search_query}%")
+
+        if status_filter == 'answered':
+            query += " AND a.answer_text IS NOT NULL"
+        elif status_filter == 'pending':
+            query += " AND a.answer_text IS NULL"
+
+        if sort_order == 'newest':
+            query += " ORDER BY q.created_at DESC"
+        else:
+            query += " ORDER BY q.created_at ASC"
+
+        cursor.execute(query, params)
+        results = cursor.fetchall()
+
+        # Format dates for JSON serialization
+        for item in results:
+            if item['created_at']:
+                item['created_at'] = item['created_at'].strftime('%Y-%m-%d %H:%M:%S')
+            if item.get('answer_date'):
+                item['answer_date'] = item['answer_date'].strftime('%Y-%m-%d %H:%M:%S')
+
+        cursor.close()
+        conn.close()
+
+        return jsonify(results)
+
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@app.route('/admin/delete_qa', methods=['POST'])
+def admin_delete_qa():
+    if 'loggedin' not in session or session.get('role') != 'Admin':
+        return jsonify({'success': False, 'error': 'Unauthorized'}), 401
+
+    try:
+        qa_id = request.form.get('qa_id')
+        delete_type = request.form.get('type')  # 'question' or 'answer'
+
+        if not qa_id or not delete_type:
+            return jsonify({'success': False, 'error': 'Missing parameters'}), 400
+
+        conn = get_db_connection()
+        cursor = conn.cursor()
+
+        if delete_type == 'question':
+            # Delete the answer first to maintain referential integrity
+            cursor.execute("DELETE FROM answers WHERE question_id = %s", (qa_id,))
+            cursor.execute("DELETE FROM questions WHERE id = %s", (qa_id,))
+        elif delete_type == 'answer':
+            cursor.execute("DELETE FROM answers WHERE question_id = %s", (qa_id,))
+        else:
+            return jsonify({'success': False, 'error': 'Invalid delete type'}), 400
+
+        conn.commit()
+        cursor.close()
+        conn.close()
+
+        return jsonify({'success': True})
+
+    except Exception as e:
+        return jsonify({'success': False, 'error': str(e)}), 500
 
 @app.route('/alumni-about')
 def alumni_about():
@@ -594,46 +848,15 @@ def admin_delete_question():
 
 # ----- Student Side -----
 
-@app.route('/student/aptitude-test')
-def student_aptitude_test():
-    if 'loggedin' not in session or session.get('role') != 'Student':
-        flash("Please login as student first", "danger")
-        return redirect(url_for('student_login'))
-    
-    try:
-        conn = get_db_connection()
-        cursor = conn.cursor(dictionary=True)
-        
-        # Get 10 random questions with formatted dates
-        cursor.execute("""
-            SELECT qn_id, qn_text, options, corr_opt,
-                   DATE_FORMAT(test_date, '%Y-%m-%d') AS test_date 
-            FROM aptitude_test 
-            ORDER BY RAND() LIMIT 10
-        """)
-        questions = cursor.fetchall()
-        
-        # Convert options JSON to dict
-        for q in questions:
-            q['options'] = json.loads(q['options'])
-        
-        return render_template('AT.html', questions=questions)
-    except Exception as e:
-        flash(f"Error loading test: {str(e)}", "danger")
-        return redirect(url_for('student_home'))
-    finally:
-        cursor.close()
-        conn.close()
 
-@app.route('/student/submit-answer', methods=['POST'])
+@app.route('/submit_answer', methods=['POST'])
 def submit_answer():
     if 'loggedin' not in session or session.get('role') != 'Student':
         return jsonify({"success": False, "error": "Unauthorized"}), 403
 
     try:
-        data = request.get_json()
-        qn_id = data.get('qn_id')
-        selected_option = data.get('selected_option', '').upper()
+        qn_id = request.form.get('qn_id')
+        selected_option = request.form.get('selected_option', '').upper()
         user_id = session['id']
 
         if not qn_id or not selected_option:
@@ -658,7 +881,7 @@ def submit_answer():
         # Record response
         cursor.execute(
             """INSERT INTO responses 
-            (user_id, qn_id, selected_option, score) 
+            (UserID, qn_id, selected_option, score) 
             VALUES (%s, %s, %s, %s)""",
             (user_id, qn_id, selected_option, score)
         )
@@ -666,17 +889,21 @@ def submit_answer():
         
         return jsonify({
             "success": True,
-            "is_correct": is_correct,
+            "is_correct": is_correct,  
             "correct_option": question['corr_opt'],
             "score": score
         })
 
     except Exception as e:
-        conn.rollback()
+        if conn and conn.is_connected():
+            conn.rollback()
         return jsonify({"success": False, "error": str(e)}), 500
     finally:
-        cursor.close()
-        conn.close()
+        if cursor:
+            cursor.close()
+        if conn and conn.is_connected():
+            conn.close()
+
 
 @app.route('/admin-CC')
 def admin_cc():
@@ -886,15 +1113,295 @@ def submit_code():
 def admin_pd():
     return render_template('AdminPD.html')
 
-# Add this temporary route to app.py
-@app.route('/test_judge0')
-def test_judge0():
-    test_code = """
-print("Hello World")
-"""
-    result = submit_to_judge0(test_code, LANGUAGE_IDS['python'])
-    return jsonify(result)
+@app.route('/student_MI')
+def student_MI():
+    if 'loggedin' not in session or session['role'] != 'Student':
+        flash('Please login as a student to access this page')
+        return redirect(url_for('home'))
+    return render_template('MI.html')
+    
+class AlumniFeedbackForm(FlaskForm):
+    meeting_id = SelectField('Interview Session', coerce=str, validators=[validators.InputRequired()])
+    professional_presentation = IntegerField('Professional Presentation (1-5)', 
+                                           validators=[validators.NumberRange(min=1, max=5), validators.InputRequired()])
+    communication_skills = IntegerField('Communication Skills (1-5)', 
+                                      validators=[validators.NumberRange(min=1, max=5), validators.InputRequired()])
+    technical_competence = IntegerField('Technical Competence (1-5)', 
+                                      validators=[validators.NumberRange(min=1, max=5), validators.InputRequired()])
+    overall_rating = IntegerField('Overall Rating (1-5)', 
+                                 validators=[validators.NumberRange(min=1, max=5), validators.InputRequired()])
+    feedback_comments = TextAreaField('Feedback & Suggestions', 
+                                    validators=[validators.InputRequired(), validators.Length(min=10)])
 
+@app.route('/alumni_MI', methods=['GET', 'POST'])
+def alumni_MI():
+    if 'loggedin' not in session or session['role'] != 'Alumni':
+        flash('Please login as an alumni to access this page', 'danger')
+        return redirect(url_for('home'))
+
+    form = AlumniFeedbackForm()
+    
+    # Get available interview sessions
+    conn = get_db_connection()
+    cursor = conn.cursor(dictionary=True)
+    cursor.execute("""
+        SELECT m.meeting_id, m.interview_type, m.interview_date, u.Name as student_name
+        FROM mock_interviews m
+        JOIN Users u ON m.user_id = u.UserID
+        WHERE m.alumni_id IS NULL OR m.alumni_id = %s
+        ORDER BY m.interview_date DESC
+    """, (session['id'],))
+    interviews = cursor.fetchall()
+    cursor.close()
+    conn.close()
+
+    # Populate meeting_id choices
+    form.meeting_id.choices = [
+        (interview['meeting_id'], 
+         f"{interview['student_name']} - {interview['interview_type']} interview ({interview['interview_date'].strftime('%Y-%m-%d')})")
+        for interview in interviews
+    ]
+
+    if form.validate_on_submit():
+        try:
+            conn = get_db_connection()
+            cursor = conn.cursor()
+            
+            # Update the mock interview record
+            cursor.execute("""
+                UPDATE mock_interviews 
+                SET professional_presentation = %s,
+                    communication_skills = %s,
+                    technical_competence = %s,
+                    rating = %s,
+                    feedback = %s,
+                    alumni_id = %s,
+                    reviewed_at = NOW()
+                WHERE meeting_id = %s
+            """, (
+                form.professional_presentation.data,
+                form.communication_skills.data,
+                form.technical_competence.data,
+                form.overall_rating.data,
+                form.feedback_comments.data,
+                session['id'],
+                form.meeting_id.data
+            ))
+            
+            conn.commit()
+            flash('Feedback submitted successfully!', 'success')
+            return redirect(url_for('alumni_MI'))
+            
+        except Exception as e:
+            conn.rollback()
+            flash(f'Error submitting feedback: {str(e)}', 'danger')
+        finally:
+            if cursor: cursor.close()
+            if conn: conn.close()
+
+    return render_template('AMI.html', form=form, interviews=interviews)
+
+
+@app.route('/api/save_meeting_id', methods=['POST'])
+def save_meeting_id():
+    if 'loggedin' not in session or session['role'] != 'Alumni':
+        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+    
+    try:
+        data = request.json
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Create a new mock interview record
+        cursor.execute("""
+            INSERT INTO mock_interviews 
+            (meeting_id, alumni_id, interview_date, interview_type)
+            VALUES (%s, %s, NOW(), 'general')
+        """, (data['meeting_id'], session['id']))
+        
+        conn.commit()
+        return jsonify({'status': 'success', 'message': 'Meeting created'})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+@app.route('/api/get_pending_interviews', methods=['GET'])
+def get_pending_interviews():
+    if 'loggedin' not in session or session['role'] != 'Alumni':
+        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT m.meeting_id, m.interview_type, m.interview_date, u.Name as student_name
+            FROM mock_interviews m
+            JOIN Users u ON m.user_id = u.UserID
+            WHERE (m.alumni_id IS NULL OR m.alumni_id = %s) AND m.rating IS NULL
+            ORDER BY m.interview_date DESC
+        """, (session['id'],))
+        interviews = cursor.fetchall()
+        return jsonify({'status': 'success', 'interviews': interviews})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+@app.route('/api/submit_alumni_rating', methods=['POST'])
+def submit_alumni_rating():
+    if 'loggedin' not in session or session['role'] != 'Alumni':
+        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+    
+    try:
+        data = request.json
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        cursor.execute("""
+            UPDATE mock_interviews 
+            SET professional_presentation = %s,
+                communication_skills = %s,
+                technical_competence = %s,
+                rating = %s,
+                feedback = %s,
+                alumni_id = %s,
+                reviewed_at = NOW()
+            WHERE meeting_id = %s
+        """, (
+            data['professional_presentation'],
+            data['communication_skills'],
+            data['technical_competence'],
+            data['overall_rating'],
+            data['feedback_comments'],
+            session['id'],
+            data['meeting_id']
+        ))
+        
+        conn.commit()
+        return jsonify({'status': 'success', 'message': 'Feedback submitted successfully'})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+@app.route('/api/get_student_feedback/<meeting_id>', methods=['GET'])
+def get_student_feedback(meeting_id):
+    if 'loggedin' not in session or session['role'] != 'Alumni':
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT m.interview_type, m.rating as student_rating, m.feedback as student_feedback
+            FROM mock_interviews m
+            WHERE m.meeting_id = %s
+        """, (meeting_id,))
+        interview = cursor.fetchone()
+        
+        if not interview:
+            return jsonify({'error': 'Interview not found'}), 404
+            
+        return jsonify({
+            'interview_type': interview['interview_type'],
+            'student_rating': interview['student_rating'],
+            'student_feedback': interview['student_feedback']
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+
+@app.route('/api/get_student_interviews', methods=['GET'])
+def get_student_interviews():
+    if 'loggedin' not in session or session['role'] != 'Student':
+        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT m.meeting_id, m.interview_type, m.interview_date, u.Name as alumni_name
+            FROM mock_interviews m
+            LEFT JOIN Users u ON m.alumni_id = u.UserID
+            WHERE m.user_id = %s OR (m.user_id IS NULL AND m.alumni_id IS NOT NULL)
+            ORDER BY m.interview_date DESC
+        """, (session['id'],))
+        interviews = cursor.fetchall()
+        return jsonify({'status': 'success', 'interviews': interviews})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+@app.route('/api/get_interview_details/<meeting_id>', methods=['GET'])
+def get_interview_details(meeting_id):
+    if 'loggedin' not in session:
+        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT interview_type FROM mock_interviews 
+            WHERE meeting_id = %s
+        """, (meeting_id,))
+        interview = cursor.fetchone()
+        return jsonify(interview or {})
+    except Exception as e:
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+@app.route('/api/submit_interview_feedback', methods=['POST'])
+def submit_interview_feedback():
+    if 'loggedin' not in session or session['role'] != 'Student':
+        return jsonify({'status': 'error', 'message': 'Unauthorized'}), 401
+    
+    try:
+        data = request.json
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        
+        # Update the mock interview record with student feedback
+        cursor.execute("""
+            UPDATE mock_interviews 
+            SET user_id = %s,
+                interview_type = %s,
+                feedback = %s,
+                rating = %s
+            WHERE meeting_id = %s
+        """, (
+            data['user_id'],
+            data['interview_type'],
+            json.dumps({
+                'experience': data['experience'],
+                'challenges': data['challenges']
+            }),
+            data['rating'],
+            data['meeting_id']
+        ))
+        
+        conn.commit()
+        return jsonify({'status': 'success', 'message': 'Feedback submitted'})
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'status': 'error', 'message': str(e)}), 500
+    finally:
+        if cursor: cursor.close()
+        if conn: conn.close()
+
+        
 @app.route('/logout')
 def logout():
     session.clear()  # Clear session for all user types

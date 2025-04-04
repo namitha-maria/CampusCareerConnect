@@ -63,6 +63,11 @@
             color: #fff;
             transform: scale(1.05);
         }
+        .register-link {
+            color: #c7ea46;
+            text-decoration: none;
+            font-size: 0.9rem;
+        }
 
         .alert {
             margin-top: 15px;
@@ -76,7 +81,7 @@
 <body>
     <div class="overlay"></div>
     <div class="login-card">
-        <h3 class="text-center mb-4">Admin Login</h3>
+        <h3 class="text-center mb-4">Admin Sign In</h3>
 
 
         <form id="adminLoginForm" action="{{ url_for('admin_login') }}" method="POST">
@@ -90,8 +95,11 @@
                 <input type="password" class="form-control" name="adminPassword" id="adminPassword"
                     placeholder="Enter your password" required>
             </div>
-            <button type="submit" class="btn btn-custom">Login</button>
+            <button type="submit" class="btn btn-custom">Sign In</button>
         </form>
+        <p class="text-center mt-3">
+            New here? <a href="{{ url_for('register') }}" class="register-link">Register as an Alumni</a>
+        </p>
     </div>
 
     <script>

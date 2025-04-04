@@ -154,32 +154,32 @@
         </button>
     </div>
 
-    <div class="content">
-        <div class="row">
-            <div class="col-md-5">
-                <div class="progress-container">
-                    <div class="progress-card">
-                        <h5>Aptitude Test Progress</h5>
-                        <div class="progress">
-                            <div id="aptitudeProgress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <p id="aptitudeScoreText">Loading...</p>
+    <div class="row">
+        <div class="col-md-5">
+            <div class="progress-container">
+                <div class="progress-card">
+                    <h5>Aptitude Test Progress</h5>
+                    <div class="progress">
+                        <div id="aptitudeProgress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
                     </div>
-
-                    <div class="progress-card">
-                        <h5>Mock Interview Progress</h5>
-                        <div class="progress">
-                            <div id="mockInterviewProgress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                        <p id="mockInterviewScoreText">Loading...</p>
-                    </div>
+                    <p id="aptitudeScoreText">Loading...</p>
                 </div>
+    
+                <div class="progress-card">
+                    <h5>Mock Interview Progress</h5>
+                    <div class="progress">
+                        <div id="mockInterviewProgress" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <p id="mockInterviewScoreText">Loading...</p>
+                </div>
+                
+                <!-- Coding Challenge card will be added dynamically by JavaScript if data exists -->
             </div>
-
-            <div class="col-md-7">
-                <div class="chart-container">
-                    <canvas id="progressChart"></canvas>
-                </div>
+        </div>
+    
+        <div class="col-md-7">
+            <div class="chart-container">
+                <canvas id="progressChart"></canvas>
             </div>
         </div>
     </div>
@@ -192,50 +192,226 @@
             sidebar.classList.toggle('active');
         });
 
+ 
         function fetchScores() {
-            setTimeout(() => {
-                let aptitudeScore = Math.floor(Math.random() * 85);
-                let mockInterviewScore = Math.floor(Math.random() * 75);
-
-                document.getElementById('aptitudeProgress').style.width = aptitudeScore + '%';
-                document.getElementById('aptitudeScoreText').innerText = `Score: ${aptitudeScore}/100`;
-
-                document.getElementById('mockInterviewProgress').style.width = mockInterviewScore + '%';
-                document.getElementById('mockInterviewScoreText').innerText = `Score: ${mockInterviewScore}/100`;
-
-                renderChart(aptitudeScore, mockInterviewScore);
-            }, 1000);
+    // Show loading state
+    document.getElementById('aptitudeScoreText').innerText = 'Loading...';
+    document.getElementById('mockInterviewScoreText').innerText = 'Loading...';
+    
+    // Fetch data from your backend API with error handling
+    fetch('/api/student/progress', {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        credentials: 'include'  // Important for session cookies
+    })
+    .then(response => {
+        if (!response.ok) {
+            // Handle HTTP errors
+            if (response.status === 401) {
+                window.location.href = "{{ url_for('home') }}";  // Redirect to login if unauthorized
+                return;
+            }
+            throw new Error(`HTTP error! status: ${response.status}`);
         }
+        return response.json();
+    })
+    .then(data => {
+        if (data.error) {
+            // Handle backend errors
+            console.error('Backend error:', data.error);
+            showError(data.error);
+            return;
+        }
+        
+        // Update aptitude test progress
+        if (data.aptitude && data.aptitude.latestScore !== undefined) {
+            const aptitudeScore = data.aptitude.latestScore;
+            document.getElementById('aptitudeProgress').style.width = aptitudeScore + '%';
+            document.getElementById('aptitudeScoreText').innerText = `Score: ${aptitudeScore.toFixed(1)}/100`;
+        } else {
+            document.getElementById('aptitudeScoreText').innerText = 'No data available';
+        }
+        
+        // Update mock interview progress
+        if (data.mockInterview && data.mockInterview.latestScore !== undefined) {
+            const mockInterviewScore = data.mockInterview.latestScore;
+            document.getElementById('mockInterviewProgress').style.width = mockInterviewScore + '%';
+            document.getElementById('mockInterviewScoreText').innerText = `Score: ${mockInterviewScore.toFixed(1)}/100`;
+        } else {
+            document.getElementById('mockInterviewScoreText').innerText = 'No data available';
+        }
+        
+        // Add/update coding challenge progress if data exists
+        if (data.codingChallenge && data.codingChallenge.latestScore !== undefined) {
+            addCodingChallengeProgress(data.codingChallenge.latestScore);
+        }
+        
+        // Render chart with historical data if any exists
+        if ((data.aptitude && data.aptitude.history.length > 0) || 
+            (data.mockInterview && data.mockInterview.history.length > 0) || 
+            (data.codingChallenge && data.codingChallenge.history.length > 0)) {
+            renderChart(data);
+        } else {
+            document.getElementById('progressChart').innerHTML = '<p class="text-muted">No historical data available</p>';
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching progress data:', error);
+        showError(error.message);
+    });
+}
 
-        function renderChart(aptitude, mockInterview) {
-            const ctx = document.getElementById('progressChart').getContext('2d');
-            new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: ['Attempt 1', 'Attempt 2', 'Attempt 3', 'Attempt 4', 'Attempt 5'],
-                    datasets: [
-                        {
-                            label: 'Aptitude Test',
-                            data: [aptitude - 10, aptitude - 5, aptitude, aptitude + 5, aptitude + 10],
-                            borderColor: '#c7ea46',
-                            fill: false
-                        },
-                        {
-                            label: 'Mock Interview',
-                            data: [mockInterview - 10, mockInterview - 5, mockInterview, mockInterview + 5, mockInterview + 10],
-                            borderColor: '#ff5733',
-                            fill: false
-                        }
-                    ]
+function showError(message) {
+    // Create or update an error message element
+    let errorElement = document.getElementById('error-message');
+    if (!errorElement) {
+        errorElement = document.createElement('div');
+        errorElement.id = 'error-message';
+        errorElement.className = 'alert alert-danger';
+        errorElement.style.margin = '20px';
+        document.querySelector('.content').prepend(errorElement);
+    }
+    errorElement.innerText = `Error: ${message}`;
+}
+// Function to add a new coding challenge progress card
+function addCodingChallengeProgress(score) {
+    const progressContainer = document.querySelector('.progress-container');
+    
+    // Check if coding card already exists
+    if (!document.getElementById('codingProgress')) {
+        const codingCard = document.createElement('div');
+        codingCard.className = 'progress-card';
+        codingCard.innerHTML = `
+            <h5>Coding Challenge Progress</h5>
+            <div class="progress">
+                <div id="codingProgress" class="progress-bar" role="progressbar" style="width: ${score}%;" aria-valuenow="${score}" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <p id="codingScoreText">Score: ${score.toFixed(1)}/100</p>
+        `;
+        progressContainer.appendChild(codingCard);
+    } else {
+        // Update existing coding card
+        document.getElementById('codingProgress').style.width = score + '%';
+        document.getElementById('codingScoreText').innerText = `Score: ${score.toFixed(1)}/100`;
+    }
+}
+
+function renderChart(data) {
+    const ctx = document.getElementById('progressChart').getContext('2d');
+    
+    // Prepare datasets and find the maximum number of data points
+    const datasets = [];
+    let maxDataPoints = 0;
+    
+    if (data.aptitude.history.length > 0) {
+        datasets.push({
+            label: 'Aptitude Test',
+            data: data.aptitude.history,
+            borderColor: '#c7ea46',
+            backgroundColor: 'rgba(199, 234, 70, 0.1)',
+            fill: false,
+            tension: 0.2
+        });
+        maxDataPoints = Math.max(maxDataPoints, data.aptitude.history.length);
+    }
+    
+    if (data.mockInterview.history.length > 0) {
+        datasets.push({
+            label: 'Mock Interview',
+            data: data.mockInterview.history,
+            borderColor: '#ff5733',
+            backgroundColor: 'rgba(255, 87, 51, 0.1)',
+            fill: false,
+            tension: 0.2
+        });
+        maxDataPoints = Math.max(maxDataPoints, data.mockInterview.history.length);
+    }
+    
+    if (data.codingChallenge.history.length > 0) {
+        datasets.push({
+            label: 'Coding Challenge',
+            data: data.codingChallenge.history,
+            borderColor: '#3498db',
+            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+            fill: false,
+            tension: 0.2
+        });
+        maxDataPoints = Math.max(maxDataPoints, data.codingChallenge.history.length);
+    }
+    
+    // Create generic labels if dates aren't available or for consistency
+    const labels = [];
+    for (let i = 0; i < maxDataPoints; i++) {
+        labels.push(`Attempt ${i+1}`);
+    }
+    
+    // Use dates from one of the datasets if available (prefer aptitude)
+    const dateLabels = data.aptitude.dates || data.mockInterview.dates || data.codingChallenge.dates;
+    
+    new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: dateLabels || labels,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                tooltip: {
+                    mode: 'index',
+                    intersect: false
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false
+                legend: {
+                    position: 'top',
+                    labels: {
+                        color: '#fff'
+                    }
+                },
+                title: {
+                    display: true,
+                    text: 'Performance Over Time',
+                    color: '#fff',
+                    font: {
+                        size: 16
+                    }
                 }
-            });
+            },
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#fff'
+                    },
+                    title: {
+                        display: true,
+                        text: 'Score',
+                        color: '#fff'
+                    }
+                },
+                x: {
+                    grid: {
+                        color: 'rgba(255, 255, 255, 0.1)'
+                    },
+                    ticks: {
+                        color: '#fff',
+                        maxRotation: 45,
+                        minRotation: 45
+                    }
+                }
+            }
         }
+    });
+}
 
-        window.onload = fetchScores;
+// Call the fetchScores function when the page loads
+window.onload = fetchScores;
 		
     function logout() {
         // Add any necessary logout functionality here

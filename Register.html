@@ -83,14 +83,6 @@
     <div class="register-card">
         <h3 class="text-center mb-4">New User Registration</h3>
 
-        <!-- Flash messages for registration errors -->
-        {% with messages = get_flashed_messages(with_categories=true) %}
-        {% if messages %}
-            {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
-        {% endwith %}
 
         <form id="registrationForm" action="{{ url_for('register') }}" method="POST">
             <div class="mb-3">
