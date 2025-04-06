@@ -553,8 +553,7 @@ def alumni_login():
 @app.route('/alumnihome')
 def home3():
     if 'loggedin' in session and session.get('role') == 'Alumni':
-        return render_template('home3.html')  # ✅ Ensure alumni get a dedicated homepage
-    else:
+        return render_template('home3.html') 
         flash("Unauthorized access!", "danger")
         return redirect(url_for('alumni_login'))  # Redirect to login if not logged in
 
@@ -1435,7 +1434,7 @@ def register():
             conn = get_db_connection()
             cursor = conn.cursor()
 
-            # 🔹 **Check if the email is already registered**
+            #  **Check if the email is already registered**
             cursor.execute("SELECT * FROM Users WHERE Email = %s", (email,))
             existing_user = cursor.fetchone()
 
@@ -1443,16 +1442,16 @@ def register():
                 flash("This email is already registered. Please use a different email.", "danger")
                 return redirect(url_for('register'))  # Show error on registration page
 
-            # 🔹 **Encrypt the password**
+            #  **Encrypt the password**
             password = bcrypt.generate_password_hash(password_raw).decode('utf-8')
 
-            # 🔹 **Insert into Users table**
+            #  **Insert into Users table**
             cursor.execute("INSERT INTO Users (Name, Email, Password, Role) VALUES (%s, %s, %s, %s)", 
                            (name, email, password, role))
             conn.commit()
             user_id = cursor.lastrowid  # Get the new UserID
 
-            # 🔹 **Insert into role-specific tables**
+            #  **Insert into role-specific tables**
             if role == "Student":
                 batch_year = request.form.get('batch_year')
                 if not batch_year:
